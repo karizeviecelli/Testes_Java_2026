@@ -1,0 +1,155 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aula 06 — Organização de Testes, Herança e Polimorfismo</title><style>
+:root{--bg:#08111f;--panel:#12233e;--panel2:#172c4c;--ink:#edf4ff;--muted:#a9bad5;--accent:#4ade80;--blue:#60a5fa;--amber:#fbbf24;--red:#fb7185;--rule:#294261;--code:#07101d}*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif}body{display:flex;flex-direction:column;overflow:hidden}code,pre,.mono{font-family:"JetBrains Mono",Consolas,monospace}.hdr{display:flex;justify-content:space-between;gap:15px;padding:11px 22px;border-bottom:1px solid var(--rule);font-size:12px;color:var(--muted)}.hdr b,.track a.active{color:var(--accent)}.track{display:flex;gap:8px}.track a{color:var(--muted);text-decoration:none}.progress{height:3px;background:var(--rule)}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--blue));transition:.25s}.viewport{position:relative;flex:1;min-height:0}.slide{position:absolute;inset:0;display:none;overflow:auto;padding:30px 48px 38px}.slide.active{display:block}.content{max-width:1180px;margin:auto}.eyebrow{font:800 11px "JetBrains Mono",monospace;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:9px}h1{font-size:clamp(34px,5vw,58px);line-height:1.04;margin:0 0 16px;max-width:1000px}h2{font-size:clamp(26px,3.4vw,40px);margin:0 0 14px}h3{margin:0 0 8px}.lead{font-size:clamp(16px,2vw,20px);line-height:1.6;color:var(--muted);max-width:940px}.hl{color:var(--accent);font-weight:800}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:13px;margin-top:18px}.card,.note{background:linear-gradient(145deg,var(--panel),var(--panel2));border:1px solid var(--rule);border-radius:11px;padding:16px}.card b{color:var(--accent)}.card p,.note{color:var(--muted);font-size:14px;line-height:1.55}.note{margin-top:17px;border-left:4px solid var(--blue)}.warning{border-left-color:var(--amber)}.success{border-left-color:var(--accent)}.code-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(250px,.75fr);gap:16px;margin-top:15px}.codebox{background:var(--code);border:1px solid var(--rule);border-radius:11px;overflow:hidden}.codehead{display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--rule);color:var(--muted);font:700 11px "JetBrains Mono",monospace}.copy{background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-radius:5px;padding:4px 8px;cursor:pointer}pre{margin:0;padding:15px 17px;overflow:auto;color:#dbeafe;font-size:12.3px;line-height:1.58}.k{color:#c792ea}.t{color:#ffcb6b}.s{color:#c3e88d}.c{color:#6f86a8;font-style:italic}.a{color:#89ddff}.n{color:#f78c6c}.fn{color:#82aaff}.steps{display:grid;gap:9px}.step{background:var(--panel);border:1px solid var(--rule);border-radius:9px;padding:12px}.step b{color:var(--accent);font-size:13px}.step p{margin:4px 0 0;color:var(--muted);font-size:13px;line-height:1.5}table{width:100%;border-collapse:collapse;background:var(--panel);border-radius:10px;overflow:hidden;margin-top:16px;font-size:14px}th,td{padding:11px 13px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}th{background:var(--panel2);color:var(--accent);font-size:12px}td{color:var(--muted)}.quiz{display:grid;gap:12px;max-width:900px}.question{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:14px}.question p{margin:0 0 9px}.option{display:block;width:100%;text-align:left;background:var(--code);color:var(--ink);border:1px solid var(--rule);border-radius:7px;padding:9px 11px;margin-top:7px;cursor:pointer}.option.correct{border-color:var(--accent);background:rgba(74,222,128,.12)}.option.wrong{border-color:var(--red);background:rgba(251,113,133,.12)}.cta{display:inline-flex;margin-top:20px;background:var(--accent);color:var(--bg);font-weight:850;text-decoration:none;padding:12px 17px;border-radius:8px}.footer{display:flex;align-items:center;gap:12px;padding:10px 20px;border-top:1px solid var(--rule)}.counter{font:700 11px "JetBrains Mono",monospace;color:var(--muted)}.dots{display:flex;gap:5px;flex:1;justify-content:center}.dot{width:7px;height:7px;padding:0;border:0;border-radius:50%;background:var(--rule);cursor:pointer}.dot.active{width:19px;border-radius:6px;background:var(--accent)}.navs{display:flex;gap:7px}.nav,.demo{border:1px solid var(--rule);background:var(--panel);color:var(--ink);padding:8px 11px;border-radius:7px;cursor:pointer;text-decoration:none;font-size:12px}.demo{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:800}.nav:disabled{opacity:.35}@media(max-width:800px){.track{display:none}.slide{padding:23px 17px 30px}.code-grid{grid-template-columns:1fr}.dots{display:none}.hdr span:last-child{display:none}pre{font-size:11px}.footer{padding:9px}.nav,.demo{padding:8px}}
+</style></head><body><header class="hdr"><span>UC <b>Teste de Sistemas</b> · Aula 06</span><nav class="track"><a class="active" href="a06_exposicao.html">Exposição</a><a href="a06_demo_ao_vivo.html">Demo</a><a href="a06_pratica_guiada.html">Prática</a><a href="a06_desafio.html">Desafio</a><a href="a06_feedback.html">Feedback</a></nav><span>JUnit 5 · POO · organização</span></header><div class="progress"><span id="progress"></span></div><main class="viewport">
+<section class="slide active"><div class="content"><div class="eyebrow">Aula 06 · 4 horas</div><h1>Testes que contam uma história organizada</h1><p class="lead">Uma suíte pode estar correta e ainda ser difícil de ler. Nesta aula, usaremos <span class="hl">nomes, grupos e categorias</span> para transformar resultados técnicos em documentação compreensível — enquanto testamos herança e polimorfismo.</p><div class="grid"><article class="card"><b>@DisplayName</b><p>Traduz nomes técnicos para frases legíveis.</p></article><article class="card"><b>@Nested</b><p>Agrupa comportamentos relacionados.</p></article><article class="card"><b>@Tag</b><p>Classifica testes para execuções seletivas.</p></article></div></div></section>
+<section class="slide"><div class="content"><div class="eyebrow">1 · Objetivos</div><h2>O que você deverá conseguir fazer</h2><div class="grid"><article class="card"><b>Nomear evidências</b><p>Usar <code>@DisplayName</code> em classes e métodos.</p></article><article class="card"><b>Organizar contextos</b><p>Separar cenários com classes internas <code>@Nested</code>.</p></article><article class="card"><b>Filtrar execuções</b><p>Classificar testes com <code>@Tag</code>.</p></article><article class="card"><b>Testar polimorfismo</b><p>Verificar contrato comum e regra específica de cada subclasse.</p></article></div><div class="note success"><b>Continuidade:</b> testes parametrizados da Aula 5 podem existir dentro de grupos <code>@Nested</code>.</div></div></section>
+<section class="slide"><div class="content"><div class="eyebrow">2 · O problema</div><h2>O relatório técnico pode esconder a regra</h2><div class="code-grid"><div class="codebox"><div class="codehead"><span>Saída sem organização</span></div><pre>FormaGeometricaTest
+ ├─ teste1() ✔
+ ├─ teste2() ✔
+ ├─ teste3() ✔
+ └─ teste4() ✘</pre></div><aside class="steps"><div class="step"><b>Qual forma falhou?</b><p>O nome não informa se foi Quadrado ou Círculo.</p></div><div class="step"><b>Qual comportamento?</b><p>Não sabemos se era cálculo, validação ou polimorfismo.</p></div><div class="step"><b>Qual próximo passo?</b><p>O professor ou desenvolvedor precisa abrir o código para descobrir.</p></div></aside></div><div class="note warning">Testes são documentação executável. Se o relatório não comunica a regra, parte do valor da suíte foi perdida.</div></div></section>
+<section class="slide"><div class="content"><div class="eyebrow">3 · DisplayName</div><h2>Nomes legíveis no relatório</h2><div class="code-grid"><div class="codebox"><div class="codehead"><span>FormaGeometricaTest.java</span><button class="copy">Copiar</button></div><pre><span class="k">import</span> org.junit.jupiter.api.DisplayName;
+<span class="k">import</span> org.junit.jupiter.api.Test;
+
+<span class="a">@DisplayName</span>(<span class="s">"Formas geométricas"</span>)
+<span class="k">class</span> <span class="t">FormaGeometricaTest</span> {
+
+    <span class="a">@Test</span>
+    <span class="a">@DisplayName</span>(<span class="s">"Quadrado de lado 4 deve ter área 16"</span>)
+    <span class="k">void</span> calcularAreaDoQuadrado() {
+        <span class="t">Quadrado</span> quadrado = <span class="k">new</span> <span class="t">Quadrado</span>(<span class="n">4.0</span>);
+        assertEquals(<span class="n">16.0</span>, quadrado.calcularArea(), <span class="n">0.001</span>);
+    }
+}</pre></div><aside class="steps"><div class="step"><b>Nome Java</b><p>Continua útil para manutenção e busca no código.</p></div><div class="step"><b>Nome exibido</b><p>Explica o cenário em linguagem natural.</p></div><div class="step"><b>Boa frase</b><p>Contexto + ação ou regra + resultado esperado.</p></div></aside></div></div></section>
+<section class="slide"><div class="content"><div class="eyebrow">4 · Nested</div><h2>Agrupar por contexto ou comportamento</h2><div class="code-grid"><div class="codebox"><div class="codehead"><span>Estrutura da suíte</span><button class="copy">Copiar</button></div><pre><span class="k">class</span> <span class="t">FormaGeometricaTest</span> {
+
+    <span class="a">@Nested</span>
+    <span class="a">@DisplayName</span>(<span class="s">"Ao trabalhar com Quadrado"</span>)
+    <span class="k">class</span> <span class="t">TestesQuadrado</span> {
+        <span class="c">// Cálculo e validações do quadrado.</span>
+    }
+
+    <span class="a">@Nested</span>
+    <span class="a">@DisplayName</span>(<span class="s">"Ao trabalhar com Círculo"</span>)
+    <span class="k">class</span> <span class="t">TestesCirculo</span> {
+        <span class="c">// Cálculo e validações do círculo.</span>
+    }
+}</pre></div><aside class="steps"><div class="step"><b>Classe interna</b><p>A classe marcada com <code>@Nested</code> não é <code>static</code>.</p></div><div class="step"><b>Leitura hierárquica</b><p>O relatório mostra grupos e testes como uma árvore.</p></div><div class="step"><b>Sem exagero</b><p>Agrupe quando o contexto melhora a leitura, não apenas para criar pastas.</p></div></aside></div></div></section>
+<section class="slide"><div class="content"><div class="eyebrow">5 · Ciclo de vida</div><h2>Preparação compartilhada dentro do grupo</h2><div class="code-grid"><div class="codebox"><div class="codehead"><span>@BeforeEach em uma classe aninhada</span><button class="copy">Copiar</button></div><pre><span class="a">@Nested</span>
+<span class="a">@DisplayName</span>(<span class="s">"Ao trabalhar com Quadrado"</span>)
+<span class="k">class</span> <span class="t">TestesQuadrado</span> {
+    <span class="k">private</span> <span class="t">Quadrado</span> quadrado;
+
+    <span class="a">@BeforeEach</span>
+    <span class="k">void</span> prepararQuadrado() {
+        <span class="c">// Um novo objeto será criado antes de cada teste do grupo.</span>
+        quadrado = <span class="k">new</span> <span class="t">Quadrado</span>(<span class="n">4.0</span>);
+    }
+
+    <span class="a">@Test</span>
+    <span class="k">void</span> areaDeveSerDezesseis() {
+        assertEquals(<span class="n">16.0</span>, quadrado.calcularArea(), <span class="n">0.001</span>);
+    }
+}</pre></div><aside class="steps"><div class="step"><b>Isolamento</b><p>Cada teste começa com uma nova instância.</p></div><div class="step"><b>Escopo</b><p>O campo existe apenas no grupo de Quadrado.</p></div><div class="step"><b>Evite dependência</b><p>Um teste nunca deve depender de outro ter executado antes.</p></div></aside></div></div></section>
+<section class="slide"><div class="content"><div class="eyebrow">6 · Tag</div><h2>Classificar para executar seletivamente</h2><div class="code-grid"><div class="codebox"><div class="codehead"><span>Categorias da suíte</span><button class="copy">Copiar</button></div><pre><span class="a">@Nested</span>
+<span class="a">@Tag</span>(<span class="s">"geometria-circular"</span>)
+<span class="k">class</span> <span class="t">TestesCirculo</span> {
+
+    <span class="a">@Test</span>
+    <span class="a">@Tag</span>(<span class="s">"rapido"</span>)
+    <span class="k">void</span> areaDeveUsarPi() {
+        <span class="c">// Este teste pertence às duas categorias.</span>
+    }
+}</pre></div><aside class="steps"><div class="step"><b>Uma ou mais tags</b><p>Um teste pode pertencer a várias categorias.</p></div><div class="step"><b>Tag no grupo</b><p>Todos os testes aninhados recebem a categoria do grupo.</p></div><div class="step"><b>Uso comum</b><p><code>rapido</code>, <code>integracao</code>, <code>banco</code> ou domínio funcional.</p></div></aside></div><div class="note warning"><b>Tag não é decoração:</b> defina nomes padronizados e uma finalidade real para o filtro.</div></div></section>
+<section class="slide"><div class="content"><div class="eyebrow">7 · Herança</div><h2>Um contrato comum para uma família de classes</h2><div class="code-grid"><div class="codebox"><div class="codehead"><span>FormaGeometrica.java</span><button class="copy">Copiar</button></div><pre><span class="k">package</span> org.example.formas;
+
+<span class="k">public abstract class</span> <span class="t">FormaGeometrica</span> {
+
+    <span class="c">// Toda forma concreta é obrigada a calcular sua área.</span>
+    <span class="k">public abstract double</span> calcularArea();
+
+    <span class="k">public</span> <span class="t">String</span> descricao() {
+        <span class="k">return</span> <span class="s">"Forma geométrica"</span>;
+    }
+}</pre></div><aside class="steps"><div class="step"><b>abstract class</b><p>Representa o conceito geral e não pode ser instanciada diretamente.</p></div><div class="step"><b>Método abstrato</b><p>Define o que todas as subclasses devem oferecer.</p></div><div class="step"><b>Método concreto</b><p>Pode fornecer comportamento comum reaproveitável.</p></div></aside></div></div></section>
+<section class="slide"><div class="content"><div class="eyebrow">8 · Subclasses</div><h2>Cada forma implementa o contrato à sua maneira</h2><div class="code-grid"><div class="codebox"><div class="codehead"><span>Quadrado.java</span><button class="copy">Copiar</button></div><pre><span class="k">public class</span> <span class="t">Quadrado</span> <span class="k">extends</span> <span class="t">FormaGeometrica</span> {
+    <span class="k">private final double</span> lado;
+
+    <span class="k">public</span> Quadrado(<span class="k">double</span> lado) {
+        <span class="k">if</span> (lado &lt;= <span class="n">0</span>) {
+            <span class="k">throw new</span> <span class="t">IllegalArgumentException</span>(
+                <span class="s">"O lado deve ser maior que zero."</span>
+            );
+        }
+        <span class="k">this</span>.lado = lado;
+    }
+
+    <span class="a">@Override</span>
+    <span class="k">public double</span> calcularArea() {
+        <span class="k">return</span> lado * lado;
+    }
+}</pre></div><div class="codebox"><div class="codehead"><span>Circulo.java</span><button class="copy">Copiar</button></div><pre><span class="k">public class</span> <span class="t">Circulo</span> <span class="k">extends</span> <span class="t">FormaGeometrica</span> {
+    <span class="k">private final double</span> raio;
+
+    <span class="k">public</span> Circulo(<span class="k">double</span> raio) {
+        <span class="k">if</span> (raio &lt;= <span class="n">0</span>) {
+            <span class="k">throw new</span> <span class="t">IllegalArgumentException</span>(
+                <span class="s">"O raio deve ser maior que zero."</span>
+            );
+        }
+        <span class="k">this</span>.raio = raio;
+    }
+
+    <span class="a">@Override</span>
+    <span class="k">public double</span> calcularArea() {
+        <span class="k">return</span> Math.PI * raio * raio;
+    }
+}</pre></div></div></div></section>
+<section class="slide"><div class="content"><div class="eyebrow">9 · Polimorfismo</div><h2>Mesmo tipo, comportamentos diferentes</h2><div class="code-grid"><div class="codebox"><div class="codehead"><span>Uso polimórfico</span><button class="copy">Copiar</button></div><pre><span class="t">FormaGeometrica</span> forma1 = <span class="k">new</span> <span class="t">Quadrado</span>(<span class="n">4.0</span>);
+<span class="t">FormaGeometrica</span> forma2 = <span class="k">new</span> <span class="t">Circulo</span>(<span class="n">2.0</span>);
+
+<span class="c">// A variável tem o mesmo tipo declarado.</span>
+<span class="c">// O método executado depende do objeto real.</span>
+<span class="k">double</span> area1 = forma1.calcularArea(); <span class="c">// 16.0</span>
+<span class="k">double</span> area2 = forma2.calcularArea(); <span class="c">// 4π</span></pre></div><aside class="steps"><div class="step"><b>Tipo da referência</b><p><code>FormaGeometrica</code>.</p></div><div class="step"><b>Objeto real</b><p><code>Quadrado</code> ou <code>Circulo</code>.</p></div><div class="step"><b>Despacho dinâmico</b><p>Java escolhe a implementação sobrescrita em tempo de execução.</p></div></aside></div></div></section>
+<section class="slide"><div class="content"><div class="eyebrow">10 · Estratégia de teste</div><h2>Contrato comum e regras específicas</h2><table><thead><tr><th>O que testar</th><th>Onde</th><th>Exemplo</th></tr></thead><tbody><tr><td>Contrato comum</td><td>Teste polimórfico ou conjunto parametrizado</td><td>Toda forma válida retorna área positiva.</td></tr><tr><td>Fórmula específica</td><td>Grupo da subclasse</td><td>Quadrado usa lado²; Círculo usa πr².</td></tr><tr><td>Validação específica</td><td>Grupo da subclasse</td><td>Lado e raio devem ser positivos.</td></tr><tr><td>Comportamento herdado</td><td>Uma vez por contrato, se não houver sobrescrita</td><td><code>descricao()</code> retorna o texto comum.</td></tr></tbody></table><div class="note success">Testar somente pela superclasse pode esconder regras específicas. Testar apenas subclasses pode repetir o mesmo contrato. Equilibre os dois níveis.</div></div></section>
+<section class="slide"><div class="content"><div class="eyebrow">11 · Suíte organizada</div><h2>Juntando @Nested, @DisplayName e @Tag</h2><div class="code-grid"><div class="codebox"><div class="codehead"><span>Trecho completo do grupo Círculo</span><button class="copy">Copiar</button></div><pre><span class="a">@Nested</span>
+<span class="a">@Tag</span>(<span class="s">"geometria-circular"</span>)
+<span class="a">@DisplayName</span>(<span class="s">"Ao trabalhar com Círculo"</span>)
+<span class="k">class</span> <span class="t">TestesCirculo</span> {
+
+    <span class="a">@Test</span>
+    <span class="a">@DisplayName</span>(<span class="s">"Raio 2 deve produzir área igual a 4π"</span>)
+    <span class="k">void</span> calcularAreaDeveUsarPi() {
+        <span class="t">Circulo</span> circulo = <span class="k">new</span> <span class="t">Circulo</span>(<span class="n">2.0</span>);
+
+        assertEquals(
+            Math.PI * <span class="n">4</span>,
+            circulo.calcularArea(),
+            <span class="n">0.0001</span>
+        );
+    }
+}</pre></div><aside class="steps"><div class="step"><b>Nested</b><p>Cria o contexto de Círculo.</p></div><div class="step"><b>DisplayName</b><p>Explica o grupo e o cenário.</p></div><div class="step"><b>Tag</b><p>Permite executar somente geometria circular.</p></div></aside></div></div></section>
+<section class="slide"><div class="content"><div class="eyebrow">12 · Parametrização</div><h2>Organização e dados trabalham juntos</h2><div class="code-grid"><div class="codebox"><div class="codehead"><span>Vários quadrados no mesmo grupo</span><button class="copy">Copiar</button></div><pre><span class="a">@Nested</span>
+<span class="k">class</span> <span class="t">TestesQuadrado</span> {
+
+    <span class="a">@ParameterizedTest</span>(name = <span class="s">"lado {0} gera área {1}"</span>)
+    <span class="a">@CsvSource</span>({
+        <span class="s">"1.0, 1.0"</span>,
+        <span class="s">"2.0, 4.0"</span>,
+        <span class="s">"4.0, 16.0"</span>
+    })
+    <span class="k">void</span> areaDeveSerLadoAoQuadrado(
+            <span class="k">double</span> lado,
+            <span class="k">double</span> esperado) {
+
+        <span class="t">Quadrado</span> quadrado = <span class="k">new</span> <span class="t">Quadrado</span>(lado);
+        assertEquals(esperado, quadrado.calcularArea(), <span class="n">0.001</span>);
+    }
+}</pre></div><aside class="steps"><div class="step"><b>Aula 5</b><p>A fonte fornece os casos.</p></div><div class="step"><b>Aula 6</b><p>O grupo explica a qual comportamento eles pertencem.</p></div></aside></div></div></section>
+<section class="slide"><div class="content"><div class="eyebrow">13 · Diagnóstico</div><h2>Erros comuns</h2><div class="grid"><article class="card"><b>@Nested em classe static</b><p>Remova <code>static</code>; o JUnit espera uma classe interna não estática.</p></article><article class="card"><b>DisplayName genérico</b><p>“Teste do círculo” ainda não informa cenário nem expectativa.</p></article><article class="card"><b>Tags inconsistentes</b><p><code>rapido</code>, <code>rápido</code> e <code>fast</code> viram categorias diferentes.</p></article><article class="card"><b>Teste polimórfico superficial</b><p>Confirme resultados, não apenas que o método pode ser chamado.</p></article></div></div></section>
+<section class="slide"><div class="content"><div class="eyebrow">14 · Fixação</div><h2>Quiz rápido</h2><div class="quiz"><div class="question"><p>1. Qual anotação altera o texto exibido no relatório?</p><button class="option" data-correct="true">@DisplayName</button><button class="option" data-correct="false">@Tag</button><button class="option" data-correct="false">@Override</button></div><div class="question"><p>2. Uma classe marcada com @Nested deve ser:</p><button class="option" data-correct="false">Uma classe externa pública</button><button class="option" data-correct="true">Uma classe interna não estática</button><button class="option" data-correct="false">Uma interface</button></div><div class="question"><p>3. Quando uma referência FormaGeometrica aponta para um Circulo, qual calcularArea é executado?</p><button class="option" data-correct="false">O da classe abstrata</button><button class="option" data-correct="true">O sobrescrito em Circulo</button><button class="option" data-correct="false">Nenhum</button></div></div></div></section>
+<section class="slide"><div class="content"><div class="eyebrow">Fechamento</div><h2>Uma boa suíte mostra onde estamos e o que foi provado</h2><p class="lead"><code>@DisplayName</code> comunica, <code>@Nested</code> contextualiza e <code>@Tag</code> seleciona. Herança define o contrato; polimorfismo exige que testemos <span class="hl">o comportamento real de cada objeto</span>.</p><div class="grid"><article class="card"><b>Agora</b><p>Veremos a hierarquia e sua suíte sendo construídas etapa por etapa.</p></article><article class="card"><b>Depois</b><p>Você organizará os próprios testes e aplicará o padrão em outro domínio.</p></article></div><a class="cta" href="a06_demo_ao_vivo.html">Ir para a demonstração ao vivo →</a></div></section>
+</main><footer class="footer"><span class="counter" id="counter">1 / 16</span><div class="dots" id="dots"></div><div class="navs"><button class="nav" id="prev">← Anterior</button><button class="nav" id="next">Próximo →</button><a class="demo" href="a06_demo_ao_vivo.html">Demonstração →</a></div></footer><script>
+const slides=[...document.querySelectorAll('.slide')],dots=document.getElementById('dots'),counter=document.getElementById('counter'),progress=document.getElementById('progress'),prev=document.getElementById('prev'),next=document.getElementById('next');let current=0;function render(){slides.forEach((s,i)=>s.classList.toggle('active',i===current));[...dots.children].forEach((d,i)=>d.classList.toggle('active',i===current));counter.textContent=`${current+1} / ${slides.length}`;progress.style.width=`${(current+1)/slides.length*100}%`;prev.disabled=current===0;next.disabled=current===slides.length-1;slides[current].scrollTop=0}slides.forEach((_,i)=>{const d=document.createElement('button');d.className='dot';d.title=`Ir para a tela ${i+1}`;d.onclick=()=>{current=i;render()};dots.appendChild(d)});prev.onclick=()=>{if(current>0){current--;render()}};next.onclick=()=>{if(current<slides.length-1){current++;render()}};document.addEventListener('keydown',e=>{if(['ArrowRight','PageDown'].includes(e.key)&&current<slides.length-1){current++;render()}if(['ArrowLeft','PageUp'].includes(e.key)&&current>0){current--;render()}});document.querySelectorAll('.copy').forEach(b=>b.onclick=async()=>{const code=b.closest('.codebox').querySelector('pre').innerText;try{await navigator.clipboard.writeText(code);b.textContent='Copiado!';setTimeout(()=>b.textContent='Copiar',1000)}catch(e){b.textContent='Selecione o código'}});document.querySelectorAll('.question').forEach(q=>q.querySelectorAll('.option').forEach(o=>o.onclick=()=>{q.querySelectorAll('.option').forEach(x=>{x.disabled=true;if(x.dataset.correct==='true')x.classList.add('correct')});if(o.dataset.correct!=='true')o.classList.add('wrong')}));render();
+</script></body></html>

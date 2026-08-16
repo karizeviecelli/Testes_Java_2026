@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 01 — Demo ao Vivo | Teste de Sistemas</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1b2b4d; --ink:#e6ebf5; --muted:#93a3c2;
+    --accent:#4ade80; --rule:#2b3a5e; --editor-bg:#0b1424;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; height:100vh; display:flex; flex-direction:column; overflow:hidden;}
+  .hdr{display:flex; justify-content:space-between; align-items:center; padding:14px 28px; border-bottom:1px solid var(--rule); font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);}
+  .hdr b{color:var(--accent);}
+
+  .main{flex:1; display:flex; overflow:hidden;}
+  .panel{flex:1; display:flex; flex-direction:column; overflow:hidden;}
+  .panel.editor{border-right:1px solid var(--rule);}
+
+  .panel-title{padding:10px 20px; font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); border-bottom:1px solid var(--rule);}
+
+  .code-area{
+    flex:1; background:var(--editor-bg); padding:20px 24px; font-family:'JetBrains Mono',monospace;
+    font-size:13.5px; line-height:1.7; overflow-y:auto; white-space:pre-wrap; word-break:break-word;
+  }
+  .k{color:#c792ea;} .a{color:#82aaff;} .s{color:#c3e88d;} .t{color:#ffcb6b;} .c{color:#546e8a;} .fn{color:#82aaff;}
+  .cursor{display:inline-block; width:8px; background:var(--accent); animation:blink 1s step-end infinite;}
+  @keyframes blink{50%{opacity:0;}}
+
+  .preview-area{flex:1; padding:28px; overflow-y:auto; display:flex; align-items:flex-start; justify-content:center;}
+  .obj-card{
+    background:#fff; color:#1b2430; border-radius:14px; padding:28px 32px; width:100%; max-width:340px;
+    box-shadow:0 10px 30px rgba(0,0,0,.35); font-family:'Inter',sans-serif;
+  }
+  .obj-card .obj-title{font-family:'JetBrains Mono',monospace; font-size:11px; color:#2f5d50; text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px;}
+  .obj-card h3{margin:0 0 18px; font-size:20px;}
+  .obj-field{display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid #eee; font-size:14px;}
+  .obj-field:last-child{border-bottom:none;}
+  .obj-field .fname{color:#6b7280; font-family:'JetBrains Mono',monospace; font-size:12px;}
+  .obj-field .fval{font-weight:600;}
+  .obj-empty{color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:13px; text-align:center; padding-top:40px;}
+  .obj-status{margin-top:16px; padding:8px 12px; border-radius:6px; font-size:12.5px; font-family:'JetBrains Mono',monospace;}
+  .obj-status.ok{background:#eafaf0; color:#1e7a46;}
+
+  .narration{padding:14px 28px; border-top:1px solid var(--rule); font-size:14px; color:var(--muted); min-height:20px;}
+  .narration b{color:var(--ink);}
+
+  .controls{display:flex; align-items:center; gap:14px; padding:14px 28px; border-top:1px solid var(--rule);}
+  button.ctrl{background:var(--panel); border:1px solid var(--rule); color:var(--ink); padding:9px 18px; border-radius:6px; font-size:13px; cursor:pointer; font-family:inherit;}
+  button.ctrl:hover{border-color:var(--accent);}
+  button.ctrl:disabled{opacity:.4; cursor:not-allowed;}
+  .progress-bar{flex:1; height:6px; background:var(--panel); border-radius:3px; overflow:hidden;}
+  .progress-fill{height:100%; background:var(--accent); width:0%; transition:width .3s;}
+  .step-label{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); min-width:70px; text-align:right;}
+
+  .footer-nav{display:flex; justify-content:space-between; padding:12px 28px; border-top:1px solid var(--rule); font-family:'JetBrains Mono',monospace; font-size:12px;}
+  .footer-nav a{color:var(--accent); text-decoration:none;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <span>UC <b>Teste de Sistemas</b> · Aula 01 — Demo ao Vivo</span>
+  <span>Construindo a classe <b>Produto</b> passo a passo</span>
+</div>
+
+<div class="main">
+  <div class="panel editor">
+    <div class="panel-title">Editor — Produto.java</div>
+    <div class="code-area" id="codeArea"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Preview — estado do objeto</div>
+    <div class="preview-area" id="previewArea">
+      <div class="obj-empty">Ainda não há nenhum objeto instanciado.<br>Acompanhe a construção da classe ao lado →</div>
+    </div>
+  </div>
+</div>
+
+<div class="narration" id="narration">Clique em <b>Iniciar digitação</b> para começar a construção da classe <b>Produto</b>.</div>
+
+<div class="controls">
+  <button class="ctrl" id="btnPrev" onclick="prevStep()">← Anterior</button>
+  <button class="ctrl" id="btnPlay" onclick="playStep()">▶ Iniciar digitação</button>
+  <button class="ctrl" id="btnNext" onclick="nextStep()">Próxima →</button>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="step-label" id="stepLabel">Etapa 0/5</div>
+</div>
+
+<div class="footer-nav">
+  <a href="a01_exposicao.html">← Exposição</a>
+  <a href="a01_pratica_guiada.html">Prática Guiada →</a>
+</div>
+
+<script>
+const steps = [
+  {
+    narration: "Etapa 1 — Declaramos a classe Produto e seus atributos privados. Isso garante encapsulamento desde o início.",
+    code: `<span class="k">public class</span> <span class="t">Produto</span> {\n\n    <span class="c">// Atributos privados: só a própria classe acessa diretamente</span>\n    <span class="k">private</span> <span class="t">String</span> nome;\n    <span class="k">private</span> <span class="t">double</span> preco;\n    <span class="k">private</span> <span class="k">int</span> quantidadeEmEstoque;\n}`,
+    preview: null
+  },
+  {
+    narration: "Etapa 2 — Criamos o construtor. Ele garante que todo Produto nasça em um estado completo e válido.",
+    code: `<span class="k">public class</span> <span class="t">Produto</span> {\n\n    <span class="k">private</span> <span class="t">String</span> nome;\n    <span class="k">private</span> <span class="t">double</span> preco;\n    <span class="k">private</span> <span class="k">int</span> quantidadeEmEstoque;\n\n    <span class="c">// Construtor: define como um Produto "nasce"</span>\n    <span class="k">public</span> <span class="fn">Produto</span>(<span class="t">String</span> nome, <span class="t">double</span> preco, <span class="k">int</span> quantidadeEmEstoque) {\n        <span class="k">this</span>.nome = nome;\n        <span class="k">this</span>.preco = preco;\n        <span class="k">this</span>.quantidadeEmEstoque = quantidadeEmEstoque;\n    }\n}`,
+    preview: null
+  },
+  {
+    narration: "Etapa 3 — Adicionamos um método com regra de negócio: estaDisponivel(). É esse tipo de comportamento que vamos testar em breve.",
+    code: `    <span class="c">// ... atributos e construtor acima ...</span>\n\n    <span class="c">// Método: um comportamento do Produto</span>\n    <span class="k">public</span> <span class="k">boolean</span> <span class="fn">estaDisponivel</span>() {\n        <span class="c">// Disponível se houver ao menos 1 unidade em estoque</span>\n        <span class="k">return</span> <span class="k">this</span>.quantidadeEmEstoque > <span class="s">0</span>;\n    }`,
+    preview: null
+  },
+  {
+    narration: "Etapa 4 — Criamos os getters: a forma controlada de ler os atributos de fora da classe.",
+    code: `    <span class="c">// Getters: leitura controlada do estado do objeto</span>\n    <span class="k">public</span> <span class="t">String</span> <span class="fn">getNome</span>() { <span class="k">return</span> nome; }\n    <span class="k">public</span> <span class="t">double</span> <span class="fn">getPreco</span>() { <span class="k">return</span> preco; }\n    <span class="k">public</span> <span class="k">int</span> <span class="fn">getQuantidadeEmEstoque</span>() { <span class="k">return</span> quantidadeEmEstoque; }`,
+    preview: null
+  },
+  {
+    narration: "Etapa 5 — Instanciamos um Produto de verdade. Veja o objeto ganhando vida no painel de preview ao lado →",
+    code: `<span class="c">// Em algum outro ponto do programa (ex.: um teste, futuramente):</span>\n<span class="t">Produto</span> teclado = <span class="k">new</span> <span class="fn">Produto</span>(<span class="s">"Teclado Mecânico"</span>, <span class="s">249.90</span>, <span class="s">12</span>);\n\nteclado.<span class="fn">estaDisponivel</span>(); <span class="c">// true</span>`,
+    preview: { nome: "Teclado Mecânico", preco: "R$ 249,90", quantidadeEmEstoque: "12", disponivel: "true" }
+  }
+];
+
+let current = -1;
+let typing = false;
+
+function updateControls(){
+  document.getElementById('btnPrev').disabled = current <= 0;
+  document.getElementById('btnPlay').disabled = typing;
+  document.getElementById('btnNext').disabled = current >= steps.length - 1 || typing;
+  document.getElementById('stepLabel').textContent = `Etapa ${Math.max(current+1,0)}/${steps.length}`;
+  document.getElementById('progressFill').style.width = `${Math.max(current+1,0) / steps.length * 100}%`;
+}
+
+function renderPreview(step){
+  const area = document.getElementById('previewArea');
+  if(!step || !step.preview){
+    area.innerHTML = '<div class="obj-empty">Ainda não há nenhum objeto instanciado.<br>Acompanhe a construção da classe ao lado →</div>';
+    return;
+  }
+  const p = step.preview;
+  area.innerHTML = `
+    <div class="obj-card">
+      <div class="obj-title">Instância em memória</div>
+      <h3>teclado : Produto</h3>
+      <div class="obj-field"><span class="fname">nome</span><span class="fval">"${p.nome}"</span></div>
+      <div class="obj-field"><span class="fname">preco</span><span class="fval">${p.preco}</span></div>
+      <div class="obj-field"><span class="fname">quantidadeEmEstoque</span><span class="fval">${p.quantidadeEmEstoque}</span></div>
+      <div class="obj-status ok">✓ estaDisponivel() → ${p.disponivel}</div>
+    </div>`;
+}
+
+async function typeCode(html){
+  const area = document.getElementById('codeArea');
+  area.innerHTML = '<span class="cursor">&nbsp;</span>';
+  typing = true;
+  updateControls();
+
+  // Parse html into a flat sequence of characters, preserving tags as atomic tokens
+  const tokens = html.match(/<[^>]+>|[\s\S]/g) || [];
+  let built = '';
+  for(const tok of tokens){
+    if(tok.startsWith('<')){
+      built += tok;
+      area.innerHTML = built + '<span class="cursor">&nbsp;</span>';
+      continue;
+    }
+    built += tok;
+    area.innerHTML = built + '<span class="cursor">&nbsp;</span>';
+    let delay;
+    if(tok === '\n') delay = 60;
+    else if(tok === ' ') delay = 20;
+    else delay = 18 + Math.random() * 25;
+    await new Promise(r => setTimeout(r, delay));
+    area.scrollTop = area.scrollHeight;
+  }
+  area.innerHTML = built;
+  typing = false;
+  updateControls();
+}
+
+async function playStep(){
+  if(typing) return;
+  if(current === -1) current = 0;
+  const step = steps[current];
+  document.getElementById('narration').innerHTML = step.narration;
+  document.getElementById('btnPlay').textContent = '↻ Rever';
+  await typeCode(step.code);
+  renderPreview(step);
+  updateControls();
+}
+
+function nextStep(){
+  if(typing || current >= steps.length - 1) return;
+  current++;
+  const step = steps[current];
+  document.getElementById('narration').innerHTML = step.narration;
+  document.getElementById('codeArea').innerHTML = step.code;
+  renderPreview(step);
+  document.getElementById('btnPlay').textContent = '↻ Rever';
+  updateControls();
+}
+
+function prevStep(){
+  if(typing || current <= 0) return;
+  current--;
+  const step = steps[current];
+  document.getElementById('narration').innerHTML = step.narration;
+  document.getElementById('codeArea').innerHTML = step.code;
+  renderPreview(step);
+  updateControls();
+}
+
+updateControls();
+</script>
+
+</body>
+</html>

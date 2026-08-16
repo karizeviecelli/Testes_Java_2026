@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 04 — Prática Guiada | Teste de Sistemas</title>
+<style>
+  :root{--bg:#0f172a; --panel:#1b2b4d; --ink:#e6ebf5; --muted:#93a3c2; --accent:#4ade80; --rule:#2b3a5e; --editor-bg:#0b1424;}
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; min-height:100vh; display:flex; flex-direction:column;}
+  .hdr{display:flex; justify-content:space-between; align-items:center; padding:14px 28px; border-bottom:1px solid var(--rule); font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);}
+  .hdr b{color:var(--accent);}
+
+  .wrap{max-width:820px; margin:0 auto; padding:36px 24px 60px; width:100%;}
+  h1{font-size:26px; margin:0 0 6px;}
+  p.sub{color:var(--muted); font-size:14.5px; margin:0 0 24px;}
+
+  .progress-bar{height:6px; background:var(--panel); border-radius:3px; overflow:hidden; margin-bottom:28px;}
+  .progress-fill{height:100%; background:var(--accent); width:0%; transition:width .3s;}
+
+  .step{background:var(--panel); border:1px solid var(--rule); border-radius:10px; margin-bottom:14px; overflow:hidden;}
+  .step-hdr{display:flex; align-items:center; gap:14px; padding:16px 20px; cursor:pointer;}
+  .step-num{
+    width:30px; height:30px; border-radius:50%; background:var(--editor-bg); border:1px solid var(--rule);
+    display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:13px; flex-shrink:0;
+  }
+  .step.done .step-num{background:var(--accent); color:#0f172a; border-color:var(--accent);}
+  .step-title{flex:1; font-weight:600; font-size:15px;}
+  .step-arrow{color:var(--muted); transition:.2s;}
+  .step.open .step-arrow{transform:rotate(90deg);}
+
+  .step-body{max-height:0; overflow:hidden; transition:max-height .3s ease;}
+  .step.open .step-body{max-height:900px;}
+  .step-inner{padding:0 20px 20px 64px;}
+  .step-inner p{font-size:14.5px; color:var(--ink); line-height:1.6; margin:0 0 12px;}
+
+  .code-wrap{background:var(--editor-bg); border:1px solid var(--rule); border-radius:8px; padding:14px 18px; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.6; overflow-x:auto; margin:12px 0;}
+  .k{color:#c792ea;} .a{color:#82aaff;} .s{color:#c3e88d;} .t{color:#ffcb6b;} .c{color:#546e8a;} .fn{color:#82aaff;}
+
+  .step-actions{display:flex; gap:10px; margin-top:10px;}
+  button.hint-btn, button.done-btn{
+    font-family:inherit; font-size:12.5px; padding:8px 14px; border-radius:6px; cursor:pointer; border:1px solid var(--rule);
+  }
+  button.hint-btn{background:transparent; color:var(--muted);}
+  button.hint-btn:hover{border-color:var(--accent); color:var(--accent);}
+  button.done-btn{background:var(--accent); color:#0f172a; border-color:var(--accent); font-weight:600;}
+  .hint-box{display:none; background:#241a0b; border-left:3px solid #fbbf24; padding:10px 14px; font-size:13px; color:#fbbf24; border-radius:6px; margin-top:10px;}
+  .hint-box.show{display:block;}
+
+  .footer-nav{display:flex; justify-content:space-between; padding:14px 28px; border-top:1px solid var(--rule); font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:auto;}
+  .footer-nav a{color:var(--accent); text-decoration:none;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <span>UC <b>Teste de Sistemas</b> · Aula 04 — Prática Guiada</span>
+  <span>Aplicando AAA e assertAll</span>
+</div>
+
+<div class="wrap">
+  <h1>Prática guiada — testando a classe Triangulo</h1>
+  <p class="sub">Siga os passos abaixo para praticar o padrão AAA e as principais asserções em uma entidade nova.</p>
+
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="step" id="step-1">
+    <div class="step-hdr" onclick="toggleStep(1)">
+      <div class="step-num">1</div>
+      <div class="step-title">Criar a entidade Triangulo</div>
+      <div class="step-arrow">▶</div>
+    </div>
+    <div class="step-body">
+      <div class="step-inner">
+        <p>Crie a classe <code>Triangulo</code> com três lados (double), validando no construtor que nenhum lado é ≤ 0.</p>
+        <div class="code-wrap"><pre>
+<span class="k">public class</span> <span class="t">Triangulo</span> {
+    <span class="k">private</span> <span class="k">double</span> ladoA, ladoB, ladoC;
+
+    <span class="k">public</span> <span class="fn">Triangulo</span>(<span class="k">double</span> a, <span class="k">double</span> b, <span class="k">double</span> c) {
+        <span class="k">if</span> (a <= <span class="s">0</span> || b <= <span class="s">0</span> || c <= <span class="s">0</span>)
+            <span class="k">throw new</span> <span class="t">IllegalArgumentException</span>(<span class="s">"Lados devem ser positivos."</span>);
+        <span class="k">this</span>.ladoA = a; <span class="k">this</span>.ladoB = b; <span class="k">this</span>.ladoC = c;
+    }
+
+    <span class="k">public</span> <span class="k">double</span> <span class="fn">calcularPerimetro</span>() { <span class="k">return</span> ladoA + ladoB + ladoC; }
+}
+        </pre></div>
+        <div class="step-actions">
+          <button class="hint-btn" onclick="toggleHint(1)">💡 Dica</button>
+          <button class="done-btn" onclick="markDone(1)">Marcar como concluído</button>
+        </div>
+        <div class="hint-box" id="hint-1">Podemos declarar vários atributos do mesmo tipo em uma linha só, separados por vírgula: "double ladoA, ladoB, ladoC;"</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step" id="step-2">
+    <div class="step-hdr" onclick="toggleStep(2)">
+      <div class="step-num">2</div>
+      <div class="step-title">Escrever um teste com Arrange-Act-Assert</div>
+      <div class="step-arrow">▶</div>
+    </div>
+    <div class="step-body">
+      <div class="step-inner">
+        <p>Escreva um teste para <code>calcularPerimetro()</code>, deixando visíveis os comentários AAA.</p>
+        <div class="code-wrap"><pre>
+<span class="fn">@Test</span>
+<span class="k">void</span> <span class="fn">calcularPerimetroDeveSomarOsTresLados</span>() {
+    <span class="c">// Arrange</span>
+    <span class="t">Triangulo</span> triangulo = <span class="k">new</span> <span class="fn">Triangulo</span>(<span class="s">3</span>, <span class="s">4</span>, <span class="s">5</span>);
+    <span class="c">// Act</span>
+    <span class="k">double</span> perimetro = triangulo.calcularPerimetro();
+    <span class="c">// Assert</span>
+    assertEquals(<span class="s">12.0</span>, perimetro);
+}
+        </pre></div>
+        <div class="step-actions">
+          <button class="hint-btn" onclick="toggleHint(2)">💡 Dica</button>
+          <button class="done-btn" onclick="markDone(2)">Marcar como concluído</button>
+        </div>
+        <div class="hint-box" id="hint-2">Manter os comentários // Arrange, // Act, // Assert ajuda muito a treinar o hábito — depois de um tempo, você faz isso automaticamente, sem precisar comentar.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step" id="step-3">
+    <div class="step-hdr" onclick="toggleStep(3)">
+      <div class="step-num">3</div>
+      <div class="step-title">Testar a exceção com assertThrows</div>
+      <div class="step-arrow">▶</div>
+    </div>
+    <div class="step-body">
+      <div class="step-inner">
+        <p>Confirme que criar um Triangulo com lado negativo lança <code>IllegalArgumentException</code>.</p>
+        <div class="code-wrap"><pre>
+<span class="fn">@Test</span>
+<span class="k">void</span> <span class="fn">ladoNegativoDeveLancarExcecao</span>() {
+    assertThrows(
+        <span class="t">IllegalArgumentException</span>.<span class="k">class</span>,
+        () -> <span class="k">new</span> <span class="fn">Triangulo</span>(-<span class="s">1</span>, <span class="s">4</span>, <span class="s">5</span>)
+    );
+}
+        </pre></div>
+        <div class="step-actions">
+          <button class="hint-btn" onclick="toggleHint(3)">💡 Dica</button>
+          <button class="done-btn" onclick="markDone(3)">Marcar como concluído</button>
+        </div>
+        <div class="hint-box" id="hint-3">Repare que aqui o Arrange e o Act "se fundem" dentro da lambda — isso é comum em testes de exceção.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step" id="step-4">
+    <div class="step-hdr" onclick="toggleStep(4)">
+      <div class="step-num">4</div>
+      <div class="step-title">Agrupar verificações com assertAll</div>
+      <div class="step-arrow">▶</div>
+    </div>
+    <div class="step-body">
+      <div class="step-inner">
+        <p>Escreva um teste que confirme os três lados de uma vez, usando <code>assertAll</code>.</p>
+        <div class="code-wrap"><pre>
+<span class="fn">@Test</span>
+<span class="k">void</span> <span class="fn">triangulo3_4_5DeveTerLadosCorretos</span>() {
+    <span class="t">Triangulo</span> t = <span class="k">new</span> <span class="fn">Triangulo</span>(<span class="s">3</span>, <span class="s">4</span>, <span class="s">5</span>);
+    assertAll(
+        () -> assertEquals(<span class="s">3.0</span>, t.getLadoA()),
+        () -> assertEquals(<span class="s">4.0</span>, t.getLadoB()),
+        () -> assertEquals(<span class="s">5.0</span>, t.getLadoC())
+    );
+}
+        </pre></div>
+        <div class="step-actions">
+          <button class="hint-btn" onclick="toggleHint(4)">💡 Dica</button>
+          <button class="done-btn" onclick="markDone(4)">Marcar como concluído</button>
+        </div>
+        <div class="hint-box" id="hint-4">Lembre-se de criar os getters getLadoA(), getLadoB() e getLadoC() na classe Triangulo.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step" id="step-5">
+    <div class="step-hdr" onclick="toggleStep(5)">
+      <div class="step-num">5</div>
+      <div class="step-title">Revisar nomes de teste e executar</div>
+      <div class="step-arrow">▶</div>
+    </div>
+    <div class="step-body">
+      <div class="step-inner">
+        <p>Releia os nomes dos seus métodos de teste: eles contam a história (o quê + condição + resultado esperado)? Depois, rode a classe inteira.</p>
+        <div class="code-wrap"><pre>
+Tests passed: 3 of 3 test — 6ms
+        </pre></div>
+        <div class="step-actions">
+          <button class="hint-btn" onclick="toggleHint(5)">💡 Dica</button>
+          <button class="done-btn" onclick="markDone(5)">Marcar como concluído</button>
+        </div>
+        <div class="hint-box" id="hint-5">Se um nome de teste ficar difícil de escrever, geralmente é sinal de que o teste está tentando verificar coisas demais de uma vez — considere dividi-lo.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-nav">
+  <a href="a04_demo_ao_vivo.html">← Demo</a>
+  <a href="a04_desafio.html">Desafio →</a>
+</div>
+
+<script>
+  const totalSteps = 5;
+  let doneSteps = new Set();
+
+  function toggleStep(n){
+    const step = document.getElementById('step-' + n);
+    const isOpen = step.classList.contains('open');
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('open'));
+    if(!isOpen) step.classList.add('open');
+  }
+
+  function toggleHint(n){
+    document.getElementById('hint-' + n).classList.toggle('show');
+  }
+
+  function markDone(n){
+    doneSteps.add(n);
+    document.getElementById('step-' + n).classList.add('done');
+    document.getElementById('progressFill').style.width = (doneSteps.size / totalSteps * 100) + '%';
+    if(n < totalSteps){
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('open'));
+      const next = document.getElementById('step-' + (n+1));
+      next.classList.add('open');
+      next.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+  }
+
+  toggleStep(1);
+</script>
+
+</body>
+</html>

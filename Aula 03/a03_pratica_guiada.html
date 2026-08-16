@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 03 — Prática Guiada | Teste de Sistemas</title>
+<style>
+  :root{--bg:#0f172a; --panel:#1b2b4d; --ink:#e6ebf5; --muted:#93a3c2; --accent:#4ade80; --rule:#2b3a5e; --editor-bg:#0b1424;}
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; min-height:100vh; display:flex; flex-direction:column;}
+  .hdr{display:flex; justify-content:space-between; align-items:center; padding:14px 28px; border-bottom:1px solid var(--rule); font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);}
+  .hdr b{color:var(--accent);}
+
+  .wrap{max-width:820px; margin:0 auto; padding:36px 24px 60px; width:100%;}
+  h1{font-size:26px; margin:0 0 6px;}
+  p.sub{color:var(--muted); font-size:14.5px; margin:0 0 24px;}
+
+  .progress-bar{height:6px; background:var(--panel); border-radius:3px; overflow:hidden; margin-bottom:28px;}
+  .progress-fill{height:100%; background:var(--accent); width:0%; transition:width .3s;}
+
+  .step{background:var(--panel); border:1px solid var(--rule); border-radius:10px; margin-bottom:14px; overflow:hidden;}
+  .step-hdr{display:flex; align-items:center; gap:14px; padding:16px 20px; cursor:pointer;}
+  .step-num{
+    width:30px; height:30px; border-radius:50%; background:var(--editor-bg); border:1px solid var(--rule);
+    display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:13px; flex-shrink:0;
+  }
+  .step.done .step-num{background:var(--accent); color:#0f172a; border-color:var(--accent);}
+  .step-title{flex:1; font-weight:600; font-size:15px;}
+  .step-arrow{color:var(--muted); transition:.2s;}
+  .step.open .step-arrow{transform:rotate(90deg);}
+
+  .step-body{max-height:0; overflow:hidden; transition:max-height .3s ease;}
+  .step.open .step-body{max-height:900px;}
+  .step-inner{padding:0 20px 20px 64px;}
+  .step-inner p{font-size:14.5px; color:var(--ink); line-height:1.6; margin:0 0 12px;}
+
+  .code-wrap{background:var(--editor-bg); border:1px solid var(--rule); border-radius:8px; padding:14px 18px; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.6; overflow-x:auto; margin:12px 0;}
+  .k{color:#c792ea;} .a{color:#82aaff;} .s{color:#c3e88d;} .t{color:#ffcb6b;} .c{color:#546e8a;} .fn{color:#82aaff;}
+
+  .step-actions{display:flex; gap:10px; margin-top:10px;}
+  button.hint-btn, button.done-btn{
+    font-family:inherit; font-size:12.5px; padding:8px 14px; border-radius:6px; cursor:pointer; border:1px solid var(--rule);
+  }
+  button.hint-btn{background:transparent; color:var(--muted);}
+  button.hint-btn:hover{border-color:var(--accent); color:var(--accent);}
+  button.done-btn{background:var(--accent); color:#0f172a; border-color:var(--accent); font-weight:600;}
+  .hint-box{display:none; background:#241a0b; border-left:3px solid #fbbf24; padding:10px 14px; font-size:13px; color:#fbbf24; border-radius:6px; margin-top:10px;}
+  .hint-box.show{display:block;}
+
+  .footer-nav{display:flex; justify-content:space-between; padding:14px 28px; border-top:1px solid var(--rule); font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:auto;}
+  .footer-nav a{color:var(--accent); text-decoration:none;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <span>UC <b>Teste de Sistemas</b> · Aula 03 — Prática Guiada</span>
+  <span>Escrevendo a classe FuncionarioTest</span>
+</div>
+
+<div class="wrap">
+  <h1>Prática guiada — testando a classe Pedido</h1>
+  <p class="sub">Siga os passos abaixo, na ordem, para escrever sua primeira classe de teste completa, com ciclo de vida (@BeforeEach) e múltiplos @Test.</p>
+
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="step" id="step-1">
+    <div class="step-hdr" onclick="toggleStep(1)">
+      <div class="step-num">1</div>
+      <div class="step-title">Criar a entidade Pedido</div>
+      <div class="step-arrow">▶</div>
+    </div>
+    <div class="step-body">
+      <div class="step-inner">
+        <p>Em <code>src/main/java</code>, crie a classe <code>Pedido</code> com um atributo <code>valorTotal</code> (double), iniciado em <code>0.0</code>.</p>
+        <div class="code-wrap"><pre>
+<span class="k">public class</span> <span class="t">Pedido</span> {
+    <span class="k">private</span> <span class="k">double</span> valorTotal;
+
+    <span class="k">public</span> <span class="k">void</span> <span class="fn">adicionarItem</span>(<span class="k">double</span> valor) {
+        <span class="k">if</span> (valor <= <span class="s">0</span>)
+            <span class="k">throw new</span> <span class="t">IllegalArgumentException</span>(<span class="s">"Valor do item deve ser positivo."</span>);
+        <span class="k">this</span>.valorTotal += valor;
+    }
+
+    <span class="k">public</span> <span class="k">double</span> <span class="fn">getValorTotal</span>() { <span class="k">return</span> valorTotal; }
+}
+        </pre></div>
+        <div class="step-actions">
+          <button class="hint-btn" onclick="toggleHint(1)">💡 Dica</button>
+          <button class="done-btn" onclick="markDone(1)">Marcar como concluído</button>
+        </div>
+        <div class="hint-box" id="hint-1">Note que valorTotal começa em 0.0 por padrão em Java para tipos double — mas é boa prática deixar isso explícito no construtor em casos reais.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step" id="step-2">
+    <div class="step-hdr" onclick="toggleStep(2)">
+      <div class="step-num">2</div>
+      <div class="step-title">Criar a classe PedidoTest e o atributo de teste</div>
+      <div class="step-arrow">▶</div>
+    </div>
+    <div class="step-body">
+      <div class="step-inner">
+        <p>Em <code>src/test/java</code>, no mesmo pacote, crie <code>PedidoTest</code> com um atributo <code>Pedido pedido</code>.</p>
+        <div class="code-wrap"><pre>
+<span class="k">class</span> <span class="t">PedidoTest</span> {
+    <span class="k">private</span> <span class="t">Pedido</span> pedido;
+}
+        </pre></div>
+        <div class="step-actions">
+          <button class="hint-btn" onclick="toggleHint(2)">💡 Dica</button>
+          <button class="done-btn" onclick="markDone(2)">Marcar como concluído</button>
+        </div>
+        <div class="hint-box" id="hint-2">Repare que a classe de teste NÃO precisa ser public — o padrão (package-private) já é suficiente para o JUnit 5 encontrá-la.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step" id="step-3">
+    <div class="step-hdr" onclick="toggleStep(3)">
+      <div class="step-num">3</div>
+      <div class="step-title">Adicionar o @BeforeEach</div>
+      <div class="step-arrow">▶</div>
+    </div>
+    <div class="step-body">
+      <div class="step-inner">
+        <p>Crie um método anotado com <code>@BeforeEach</code> que instancia um novo <code>Pedido</code> antes de cada teste.</p>
+        <div class="code-wrap"><pre>
+<span class="fn">@BeforeEach</span>
+<span class="k">void</span> <span class="fn">configurar</span>() {
+    pedido = <span class="k">new</span> <span class="fn">Pedido</span>();
+}
+        </pre></div>
+        <div class="step-actions">
+          <button class="hint-btn" onclick="toggleHint(3)">💡 Dica</button>
+          <button class="done-btn" onclick="markDone(3)">Marcar como concluído</button>
+        </div>
+        <div class="hint-box" id="hint-3">Não esqueça o import: "import org.junit.jupiter.api.BeforeEach;" no topo do arquivo.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step" id="step-4">
+    <div class="step-hdr" onclick="toggleStep(4)">
+      <div class="step-num">4</div>
+      <div class="step-title">Escrever os métodos @Test</div>
+      <div class="step-arrow">▶</div>
+    </div>
+    <div class="step-body">
+      <div class="step-inner">
+        <p>Escreva dois testes: um confirmando que o pedido nasce com valorTotal 0.0, e outro confirmando que adicionarItem() soma corretamente.</p>
+        <div class="code-wrap"><pre>
+<span class="fn">@Test</span>
+<span class="k">void</span> <span class="fn">pedidoDeveNascerComValorZero</span>() {
+    assertEquals(<span class="s">0.0</span>, pedido.getValorTotal());
+}
+
+<span class="fn">@Test</span>
+<span class="k">void</span> <span class="fn">adicionarItemDeveSomarAoTotal</span>() {
+    pedido.adicionarItem(<span class="s">50.0</span>);
+    pedido.adicionarItem(<span class="s">30.0</span>);
+    assertEquals(<span class="s">80.0</span>, pedido.getValorTotal());
+}
+        </pre></div>
+        <div class="step-actions">
+          <button class="hint-btn" onclick="toggleHint(4)">💡 Dica</button>
+          <button class="done-btn" onclick="markDone(4)">Marcar como concluído</button>
+        </div>
+        <div class="hint-box" id="hint-4">Não esqueça o import estático: "import static org.junit.jupiter.api.Assertions.assertEquals;"</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step" id="step-5">
+    <div class="step-hdr" onclick="toggleStep(5)">
+      <div class="step-num">5</div>
+      <div class="step-title">Executar pelo IntelliJ e conferir o resultado</div>
+      <div class="step-arrow">▶</div>
+    </div>
+    <div class="step-body">
+      <div class="step-inner">
+        <p>Clique no ícone de "play" ao lado do nome da classe PedidoTest para rodar todos os testes de uma vez.</p>
+        <div class="code-wrap"><pre>
+Tests passed: 2 of 2 test — 5ms
+        </pre></div>
+        <div class="step-actions">
+          <button class="hint-btn" onclick="toggleHint(5)">💡 Dica</button>
+          <button class="done-btn" onclick="markDone(5)">Marcar como concluído</button>
+        </div>
+        <div class="hint-box" id="hint-5">Se algum teste ficar vermelho, leia a mensagem de erro com calma — o JUnit sempre mostra o valor esperado (expected) vs. o valor obtido (actual).</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-nav">
+  <a href="a03_demo_ao_vivo.html">← Demo</a>
+  <a href="a03_desafio.html">Desafio →</a>
+</div>
+
+<script>
+  const totalSteps = 5;
+  let doneSteps = new Set();
+
+  function toggleStep(n){
+    const step = document.getElementById('step-' + n);
+    const isOpen = step.classList.contains('open');
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('open'));
+    if(!isOpen) step.classList.add('open');
+  }
+
+  function toggleHint(n){
+    document.getElementById('hint-' + n).classList.toggle('show');
+  }
+
+  function markDone(n){
+    doneSteps.add(n);
+    document.getElementById('step-' + n).classList.add('done');
+    document.getElementById('progressFill').style.width = (doneSteps.size / totalSteps * 100) + '%';
+    if(n < totalSteps){
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('open'));
+      const next = document.getElementById('step-' + (n+1));
+      next.classList.add('open');
+      next.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+  }
+
+  toggleStep(1);
+</script>
+
+</body>
+</html>

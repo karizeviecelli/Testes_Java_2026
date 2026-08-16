@@ -1,0 +1,104 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aula 05 — Demonstração ao vivo</title><style>
+:root{--bg:#08111f;--panel:#12233e;--ink:#edf4ff;--muted:#a9bad5;--accent:#4ade80;--blue:#60a5fa;--rule:#294261;--code:#07101d}*{box-sizing:border-box}body{margin:0;height:100vh;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;overflow:hidden}code,.editor,.terminal{font-family:"JetBrains Mono",Consolas,monospace}.hdr{display:flex;justify-content:space-between;gap:12px;padding:11px 20px;border-bottom:1px solid var(--rule);font-size:12px;color:var(--muted)}.hdr b,.track a.active{color:var(--accent)}.track{display:flex;gap:7px}.track a{color:var(--muted);text-decoration:none}.main{display:grid;grid-template-columns:1.15fr .85fr;flex:1;min-height:0}.pane{display:flex;flex-direction:column;min-width:0}.pane:first-child{border-right:1px solid var(--rule)}.pane-title{padding:9px 16px;border-bottom:1px solid var(--rule);font:700 11px "JetBrains Mono",monospace;color:var(--muted);text-transform:uppercase}.editor{background:var(--code);padding:18px;overflow:auto;white-space:pre-wrap;font-size:12.5px;line-height:1.62;flex:1}.explain{padding:22px;overflow:auto;flex:1}.explain h2{font-size:28px;margin:0 0 9px}.explain p{color:var(--muted);line-height:1.6}.evidence{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:14px;margin-top:15px}.evidence b{color:var(--accent)}.terminal{background:#030711;border:1px solid var(--rule);border-radius:9px;padding:13px;margin-top:14px;color:#c3e88d;font-size:12px;white-space:pre-wrap}.k{color:#c792ea}.t{color:#ffcb6b}.s{color:#c3e88d}.c{color:#6f86a8;font-style:italic}.a{color:#89ddff}.n{color:#f78c6c}.fn{color:#82aaff}.narration{padding:11px 20px;border-top:1px solid var(--rule);color:var(--muted);font-size:13px}.controls{display:flex;align-items:center;gap:8px;padding:10px 20px;border-top:1px solid var(--rule)}button{background:var(--panel);border:1px solid var(--rule);color:var(--ink);padding:8px 12px;border-radius:6px;cursor:pointer}button:hover{border-color:var(--accent)}button:disabled{opacity:.35}.bar{height:5px;background:var(--panel);flex:1;border-radius:4px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--blue));transition:.25s}.count{font:700 11px "JetBrains Mono",monospace;color:var(--muted)}.footer{display:flex;justify-content:space-between;padding:10px 20px;border-top:1px solid var(--rule);font-size:12px}.footer a{color:var(--accent);text-decoration:none}@media(max-width:780px){.track{display:none}.main{grid-template-columns:1fr}.pane:first-child{border-right:0}.explain{display:none}.editor{font-size:11.2px}.hdr span:last-child{display:none}}
+</style></head><body><header class="hdr"><span>UC <b>Teste de Sistemas</b> · Aula 05 — Demonstração</span><nav class="track"><a href="a05_exposicao.html">Exposição</a><a class="active" href="a05_demo_ao_vivo.html">Demo</a><a href="a05_pratica_guiada.html">Prática</a><a href="a05_desafio.html">Desafio</a><a href="a05_feedback.html">Feedback</a></nav><span>DescontoTest.java</span></header>
+<main class="main"><section class="pane"><div class="pane-title">Editor — código completo da etapa</div><div class="editor" id="code"></div></section><section class="pane"><div class="pane-title">Leitura da evidência</div><div class="explain"><h2 id="title"></h2><p id="text"></p><div class="evidence"><b>O que observar</b><p id="evidence"></p></div><div class="terminal" id="terminal"></div></div></section></main>
+<div class="narration" id="narration"></div><div class="controls"><button id="prev">← Anterior</button><button id="replay">↻ Rever etapa</button><button id="next">Próxima →</button><div class="bar"><div class="fill" id="fill"></div></div><span class="count" id="count"></span></div><footer class="footer"><a href="a05_exposicao.html">← Exposição</a><a href="a05_pratica_guiada.html">Prática guiada →</a></footer>
+<script>
+const steps=[
+{title:'1. Implementar a regra de desconto',text:'Começamos pela classe de produção. Ela valida o preço e o percentual antes de calcular.',evidence:'As fronteiras válidas são 0% e 100%. Valores fora desse intervalo lançam IllegalArgumentException.',terminal:'Produção preparada. Ainda não executamos testes.',code:`<span class="k">package</span> org.example;
+
+<span class="k">public final class</span> <span class="t">Desconto</span> {
+    <span class="c">// Impede a criação de objetos de uma classe utilitária.</span>
+    <span class="k">private</span> Desconto() { }
+
+    <span class="k">public static double</span> calcular(<span class="k">double</span> preco, <span class="k">int</span> percentual) {
+        <span class="k">if</span> (preco &lt; <span class="n">0</span>) {
+            <span class="k">throw new</span> <span class="t">IllegalArgumentException</span>(
+                <span class="s">"O preço não pode ser negativo."</span>
+            );
+        }
+        <span class="k">if</span> (percentual &lt; <span class="n">0</span> || percentual &gt; <span class="n">100</span>) {
+            <span class="k">throw new</span> <span class="t">IllegalArgumentException</span>(
+                <span class="s">"O percentual deve estar entre 0 e 100."</span>
+            );
+        }
+
+        <span class="k">double</span> valorDoDesconto = preco * percentual / <span class="n">100.0</span>;
+        <span class="k">return</span> preco - valorDoDesconto;
+    }
+}`},
+{title:'2. Preparar a classe de teste',text:'Os testes parametrizados usam imports do pacote org.junit.jupiter.params.',evidence:'O import static permite escrever assertEquals e assertThrows sem repetir Assertions.',terminal:'Compilação: imports reconhecidos.',code:`<span class="k">package</span> org.example;
+
+<span class="k">import</span> org.junit.jupiter.api.Test;
+<span class="k">import</span> org.junit.jupiter.api.Timeout;
+<span class="k">import</span> org.junit.jupiter.params.ParameterizedTest;
+<span class="k">import</span> org.junit.jupiter.params.provider.CsvSource;
+<span class="k">import</span> org.junit.jupiter.params.provider.ValueSource;
+
+<span class="k">import</span> java.util.concurrent.TimeUnit;
+
+<span class="k">import static</span> org.junit.jupiter.api.Assertions.*;
+
+<span class="k">class</span> <span class="t">DescontoTest</span> {
+    <span class="c">// Os métodos de teste serão adicionados aqui.</span>
+}`},
+{title:'3. Parametrizar cenários válidos',text:'Cada linha contém preço, percentual e resultado esperado. O JUnit converte e injeta os valores.',evidence:'O nome da execução usa {0}, {1} e {2}, que representam as três colunas.',terminal:'4 casos descobertos em calcularDeveAplicarPercentual.',code:`<span class="a">@ParameterizedTest</span>(name = <span class="s">"R$ {0} com {1}% deve resultar em R$ {2}"</span>)
+<span class="a">@CsvSource</span>({
+    <span class="s">"100.00,  10,  90.00"</span>,
+    <span class="s">"200.00,  20, 160.00"</span>,
+    <span class="s">" 80.00,   0,  80.00"</span>,
+    <span class="s">" 50.00, 100,   0.00"</span>
+})
+<span class="k">void</span> calcularDeveAplicarPercentual(
+        <span class="k">double</span> preco,
+        <span class="k">int</span> percentual,
+        <span class="k">double</span> esperado) {
+
+    <span class="c">// Act: calcula o resultado para a linha atual.</span>
+    <span class="k">double</span> obtido = Desconto.calcular(preco, percentual);
+
+    <span class="c">// Assert: compara doubles usando uma pequena tolerância.</span>
+    assertEquals(esperado, obtido, <span class="n">0.001</span>);
+}`},
+{title:'4. Testar preços inválidos',text:'ValueSource é ideal quando apenas um valor varia e todos os casos esperam o mesmo comportamento.',evidence:'As três execuções devem lançar a mesma classe de exceção e preservar a mensagem da regra.',terminal:'3 casos descobertos em precoNegativoDeveLancarExcecao.',code:`<span class="a">@ParameterizedTest</span>(name = <span class="s">"preço inválido: {0}"</span>)
+<span class="a">@ValueSource</span>(doubles = {-<span class="n">0.01</span>, -<span class="n">1.0</span>, -<span class="n">100.0</span>})
+<span class="k">void</span> precoNegativoDeveLancarExcecao(<span class="k">double</span> preco) {
+    <span class="t">IllegalArgumentException</span> excecao = assertThrows(
+        <span class="t">IllegalArgumentException</span>.<span class="k">class</span>,
+        () -&gt; Desconto.calcular(preco, <span class="n">10</span>)
+    );
+
+    assertEquals(
+        <span class="s">"O preço não pode ser negativo."</span>,
+        excecao.getMessage()
+    );
+}`},
+{title:'5. Testar os lados da fronteira',text:'Os valores -1 e 101 ficam imediatamente fora do intervalo permitido. São excelentes casos de teste.',evidence:'CsvSource também pode fornecer o valor inválido e a mensagem esperada.',terminal:'2 casos descobertos em percentualForaDoIntervaloDeveFalhar.',code:`<span class="a">@ParameterizedTest</span>
+<span class="a">@CsvSource</span>({
+    <span class="s">"-1,  O percentual deve estar entre 0 e 100."</span>,
+    <span class="s">"101, O percentual deve estar entre 0 e 100."</span>
+})
+<span class="k">void</span> percentualForaDoIntervaloDeveFalhar(
+        <span class="k">int</span> percentual,
+        <span class="t">String</span> mensagemEsperada) {
+
+    <span class="t">IllegalArgumentException</span> excecao = assertThrows(
+        <span class="t">IllegalArgumentException</span>.<span class="k">class</span>,
+        () -&gt; Desconto.calcular(<span class="n">100.0</span>, percentual)
+    );
+
+    assertEquals(mensagemEsperada, excecao.getMessage());
+}`},
+{title:'6. Adicionar um limite de tempo',text:'Timeout verifica se a execução termina antes do limite. Aqui ele funciona como uma proteção simples.',evidence:'Esse teste não mede desempenho com precisão e não substitui benchmark.',terminal:'1 teste de tempo descoberto.',code:`<span class="a">@Test</span>
+<span class="a">@Timeout</span>(value = <span class="n">100</span>, unit = TimeUnit.MILLISECONDS)
+<span class="k">void</span> calcularDeveTerminarRapidamente() {
+    Desconto.calcular(<span class="n">250.0</span>, <span class="n">15</span>);
+}`},
+{title:'7. Executar a suíte completa',text:'Um pequeno número de métodos produziu dez execuções independentes.',evidence:'Se um conjunto falhar, o relatório identifica exatamente seus argumentos.',terminal:'✓ 4/4 calcularDeveAplicarPercentual\n✓ 3/3 precoNegativoDeveLancarExcecao\n✓ 2/2 percentualForaDoIntervaloDeveFalhar\n✓ 1/1 calcularDeveTerminarRapidamente\n\nTests passed: 10 of 10',code:`<span class="c">// Resultado conceitual:</span>
+<span class="c">// 3 métodos parametrizados + 1 teste comum</span>
+<span class="c">// = 10 execuções verificadas pelo JUnit.</span>
+
+<span class="c">// Para executar no IntelliJ:</span>
+<span class="c">// clique no ícone verde ao lado da classe DescontoTest.</span>`}
+];let current=0;const $=id=>document.getElementById(id);function render(){const s=steps[current];$('title').textContent=s.title;$('text').textContent=s.text;$('evidence').textContent=s.evidence;$('terminal').textContent=s.terminal;$('code').innerHTML=s.code;$('narration').innerHTML=`<b>Etapa:</b> ${s.text}`;$('fill').style.width=`${(current+1)/steps.length*100}%`;$('count').textContent=`${current+1} / ${steps.length}`;$('prev').disabled=current===0;$('next').disabled=current===steps.length-1}$('prev').onclick=()=>{if(current>0){current--;render()}};$('next').onclick=()=>{if(current<steps.length-1){current++;render()}};$('replay').onclick=render;document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'&&current<steps.length-1){current++;render()}if(e.key==='ArrowLeft'&&current>0){current--;render()}});render();
+</script></body></html>

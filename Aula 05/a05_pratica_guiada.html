@@ -1,0 +1,105 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aula 05 — Prática guiada</title><style>
+:root{--bg:#08111f;--panel:#12233e;--panel2:#172c4c;--ink:#edf4ff;--muted:#a9bad5;--accent:#4ade80;--blue:#60a5fa;--amber:#fbbf24;--rule:#294261;--code:#07101d}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif}.hdr{display:flex;justify-content:space-between;gap:15px;padding:11px 22px;border-bottom:1px solid var(--rule);font-size:12px;color:var(--muted)}.hdr b,.track a.active{color:var(--accent)}.track{display:flex;gap:7px}.track a{color:var(--muted);text-decoration:none}.wrap{width:min(980px,100%);margin:auto;padding:32px 22px 52px;flex:1}h1{font-size:clamp(28px,4vw,42px);margin:0 0 8px}.sub{color:var(--muted);line-height:1.6}.bar{height:5px;background:var(--panel);border-radius:5px;margin:20px 0}.fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--blue));transition:.25s}.step{background:var(--panel);border:1px solid var(--rule);border-radius:10px;margin:10px 0;overflow:hidden}.step.done{border-color:var(--accent)}.step-head{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer}.num{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--code);color:var(--accent);font:800 12px "JetBrains Mono",monospace}.step.done .num{background:var(--accent);color:var(--bg)}.title{font-weight:750;flex:1}.arrow{color:var(--muted)}.step.open .arrow{transform:rotate(90deg)}.body{display:none;border-top:1px solid var(--rule)}.step.open .body{display:block}.inside{padding:17px 18px}.inside p,.hint{color:var(--muted);line-height:1.55}.code{background:var(--code);border:1px solid var(--rule);border-radius:9px;overflow:auto;margin:12px 0}.code pre{margin:0;padding:15px;font:12.2px/1.58 "JetBrains Mono",Consolas,monospace;color:#dbeafe}.k{color:#c792ea}.t{color:#ffcb6b}.s{color:#c3e88d}.c{color:#6f86a8;font-style:italic}.a{color:#89ddff}.n{color:#f78c6c}.actions{display:flex;gap:8px}button{border:1px solid var(--rule);background:var(--code);color:var(--ink);padding:8px 11px;border-radius:6px;cursor:pointer}.done-btn{background:var(--accent);color:var(--bg);font-weight:800}.hint{display:none;background:rgba(251,191,36,.08);border-left:3px solid var(--amber);padding:11px 13px;margin-top:10px}.hint.show{display:block}.footer{display:flex;justify-content:space-between;padding:11px 22px;border-top:1px solid var(--rule);font-size:12px}.footer a{color:var(--accent);text-decoration:none}@media(max-width:700px){.track{display:none}.wrap{padding:24px 14px 40px}.hdr span:last-child{display:none}.code pre{font-size:10.8px}}
+</style></head><body><header class="hdr"><span>UC <b>Teste de Sistemas</b> · Aula 05 — Prática guiada</span><nav class="track"><a href="a05_exposicao.html">Exposição</a><a href="a05_demo_ao_vivo.html">Demo</a><a class="active" href="a05_pratica_guiada.html">Prática</a><a href="a05_desafio.html">Desafio</a><a href="a05_feedback.html">Feedback</a></nav><span>7 etapas · aproximadamente 70 min</span></header><main class="wrap"><h1>Prática guiada — suíte da classe Desconto</h1><p class="sub">Implemente cada etapa no projeto. Antes de copiar, tente explicar o que cada anotação e cada parâmetro fazem. Marque a conclusão somente depois de executar.</p><div class="bar"><div class="fill" id="fill"></div></div>
+
+<section class="step open"><div class="step-head"><span class="num">1</span><span class="title">Criar a classe de produção</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Crie <code>Desconto.java</code> em <code>src/main/java/org/example</code>. A regra deve validar os argumentos antes de calcular.</p><div class="code"><pre><span class="k">package</span> org.example;
+
+<span class="k">public final class</span> <span class="t">Desconto</span> {
+    <span class="c">// Construtor privado: a classe oferece apenas métodos estáticos.</span>
+    <span class="k">private</span> Desconto() { }
+
+    <span class="k">public static double</span> calcular(<span class="k">double</span> preco, <span class="k">int</span> percentual) {
+        <span class="k">if</span> (preco &lt; <span class="n">0</span>) {
+            <span class="k">throw new</span> <span class="t">IllegalArgumentException</span>(
+                <span class="s">"O preço não pode ser negativo."</span>
+            );
+        }
+
+        <span class="k">if</span> (percentual &lt; <span class="n">0</span> || percentual &gt; <span class="n">100</span>) {
+            <span class="k">throw new</span> <span class="t">IllegalArgumentException</span>(
+                <span class="s">"O percentual deve estar entre 0 e 100."</span>
+            );
+        }
+
+        <span class="k">double</span> valorDoDesconto = preco * percentual / <span class="n">100.0</span>;
+        <span class="k">return</span> preco - valorDoDesconto;
+    }
+}</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">Teste mentalmente: preço 200 e percentual 25 produzem desconto 50 e resultado 150.</div></div></div></section>
+
+<section class="step"><div class="step-head"><span class="num">2</span><span class="title">Preparar DescontoTest e os imports</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Crie o arquivo em <code>src/test/java/org/example</code>. Não misture imports do JUnit 4.</p><div class="code"><pre><span class="k">package</span> org.example;
+
+<span class="k">import</span> org.junit.jupiter.api.Test;
+<span class="k">import</span> org.junit.jupiter.api.Timeout;
+<span class="k">import</span> org.junit.jupiter.params.ParameterizedTest;
+<span class="k">import</span> org.junit.jupiter.params.provider.CsvSource;
+<span class="k">import</span> org.junit.jupiter.params.provider.ValueSource;
+
+<span class="k">import</span> java.util.concurrent.TimeUnit;
+
+<span class="k">import static</span> org.junit.jupiter.api.Assertions.*;
+
+<span class="k">class</span> <span class="t">DescontoTest</span> {
+    <span class="c">// Os testes entram dentro desta classe.</span>
+}</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">Se <code>org.junit.jupiter.params</code> não for encontrado, confira se o projeto possui a dependência <code>junit-jupiter</code>.</div></div></div></section>
+
+<section class="step"><div class="step-head"><span class="num">3</span><span class="title">Testar resultados com @CsvSource</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Mapeie cada coluna para um parâmetro. Inclua cenários comuns e as fronteiras 0% e 100%.</p><div class="code"><pre><span class="a">@ParameterizedTest</span>(name = <span class="s">"caso {index}: R$ {0} - {1}% = R$ {2}"</span>)
+<span class="a">@CsvSource</span>({
+    <span class="s">"100.00,  10,  90.00"</span>,
+    <span class="s">"200.00,  25, 150.00"</span>,
+    <span class="s">" 80.00,   0,  80.00"</span>,
+    <span class="s">" 50.00, 100,   0.00"</span>
+})
+<span class="k">void</span> calcularDeveAplicarPercentual(
+        <span class="k">double</span> preco,
+        <span class="k">int</span> percentual,
+        <span class="k">double</span> esperado) {
+
+    <span class="k">double</span> obtido = Desconto.calcular(preco, percentual);
+
+    assertEquals(esperado, obtido, <span class="n">0.001</span>);
+}</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">Altere propositalmente um valor esperado e observe qual nome de execução aparece no relatório.</div></div></div></section>
+
+<section class="step"><div class="step-head"><span class="num">4</span><span class="title">Testar preços negativos com @ValueSource</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Como somente o preço varia, use uma fonte de valor simples. Capture a exceção e confira a mensagem.</p><div class="code"><pre><span class="a">@ParameterizedTest</span>(name = <span class="s">"preço {0} deve ser rejeitado"</span>)
+<span class="a">@ValueSource</span>(doubles = {-<span class="n">0.01</span>, -<span class="n">1.0</span>, -<span class="n">100.0</span>})
+<span class="k">void</span> precoNegativoDeveLancarExcecao(<span class="k">double</span> preco) {
+    <span class="t">IllegalArgumentException</span> excecao = assertThrows(
+        <span class="t">IllegalArgumentException</span>.<span class="k">class</span>,
+        () -&gt; Desconto.calcular(preco, <span class="n">10</span>)
+    );
+
+    assertEquals(
+        <span class="s">"O preço não pode ser negativo."</span>,
+        excecao.getMessage()
+    );
+}</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">O corpo do teste não muda: todos os preços negativos devem produzir o mesmo tipo e a mesma mensagem.</div></div></div></section>
+
+<section class="step"><div class="step-head"><span class="num">5</span><span class="title">Testar valores logo fora das fronteiras</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Os percentuais válidos vão de 0 a 100. Portanto, os valores mais próximos e inválidos são -1 e 101.</p><div class="code"><pre><span class="a">@ParameterizedTest</span>(name = <span class="s">"percentual inválido: {0}"</span>)
+<span class="a">@ValueSource</span>(ints = {-<span class="n">1</span>, <span class="n">101</span>})
+<span class="k">void</span> percentualForaDoIntervaloDeveFalhar(<span class="k">int</span> percentual) {
+    <span class="t">IllegalArgumentException</span> excecao = assertThrows(
+        <span class="t">IllegalArgumentException</span>.<span class="k">class</span>,
+        () -&gt; Desconto.calcular(<span class="n">100.0</span>, percentual)
+    );
+
+    assertEquals(
+        <span class="s">"O percentual deve estar entre 0 e 100."</span>,
+        excecao.getMessage()
+    );
+}</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">Testar -1000 e 5000 também é válido, mas -1 e 101 verificam com precisão a transição da regra.</div></div></div></section>
+
+<section class="step"><div class="step-head"><span class="num">6</span><span class="title">Adicionar @Timeout com cautela</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Use um limite folgado para evitar falhas causadas apenas por variação do computador.</p><div class="code"><pre><span class="a">@Test</span>
+<span class="a">@Timeout</span>(value = <span class="n">100</span>, unit = TimeUnit.MILLISECONDS)
+<span class="k">void</span> calcularDeveTerminarRapidamente() {
+    <span class="c">// O teste passa se a chamada terminar antes do limite.</span>
+    Desconto.calcular(<span class="n">250.0</span>, <span class="n">15</span>);
+}</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint"><code>@Timeout</code> protege contra travamentos ou lentidão grosseira; medições precisas exigem ferramentas de benchmark.</div></div></div></section>
+
+<section class="step"><div class="step-head"><span class="num">7</span><span class="title">Executar, ler o relatório e provocar uma falha</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Execute a classe inteira. Depois mude temporariamente <code>150.00</code> para <code>151.00</code> no CSV e confirme que o relatório identifica somente esse conjunto.</p><div class="code"><pre>✓ calcularDeveAplicarPercentual: 4/4
+✓ precoNegativoDeveLancarExcecao: 3/3
+✓ percentualForaDoIntervaloDeveFalhar: 2/2
+✓ calcularDeveTerminarRapidamente: 1/1
+
+Tests passed: 10 of 10</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">Um bom teste precisa falhar quando a expectativa é alterada. Se continuar verde, ele talvez não esteja verificando o resultado correto.</div></div></div></section>
+</main><footer class="footer"><a href="a05_demo_ao_vivo.html">← Demonstração</a><a href="a05_desafio.html">Desafio autônomo →</a></footer><script>
+const steps=[...document.querySelectorAll('.step')],done=new Set();function refresh(){steps.forEach((s,i)=>s.classList.toggle('done',done.has(i)));document.getElementById('fill').style.width=`${done.size/steps.length*100}%`}steps.forEach((s,i)=>{s.querySelector('.step-head').onclick=()=>{const open=s.classList.contains('open');steps.forEach(x=>x.classList.remove('open'));if(!open)s.classList.add('open')};s.querySelector('.hint-btn').onclick=e=>{e.stopPropagation();s.querySelector('.hint').classList.toggle('show')};s.querySelector('.done-btn').onclick=e=>{e.stopPropagation();done.add(i);refresh();s.classList.remove('open');const next=steps[i+1];if(next){next.classList.add('open');next.scrollIntoView({behavior:'smooth',block:'center'})}}});refresh();
+</script></body></html>

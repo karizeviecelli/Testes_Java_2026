@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 12 — Feedback | Teste de Sistemas</title>
+<style>
+  :root{--bg:#0f172a; --panel:#1b2b4d; --ink:#e6ebf5; --muted:#93a3c2; --accent:#4ade80; --rule:#2b3a5e; --editor-bg:#0b1424;}
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; min-height:100vh; display:flex; flex-direction:column;}
+  .hdr{display:flex; justify-content:space-between; align-items:center; padding:14px 28px; border-bottom:1px solid var(--rule); font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);}
+  .hdr b{color:var(--accent);}
+
+  .wrap{max-width:1100px; margin:0 auto; padding:32px 24px 60px; width:100%; flex:1;}
+  h1{font-size:24px; margin:0 0 6px;}
+  p.sub{color:var(--muted); font-size:14px; margin:0 0 20px;}
+
+  .legend{background:var(--panel); border:1px solid var(--rule); border-radius:10px; padding:16px 20px; margin-bottom:22px; font-size:13px; color:var(--muted); line-height:1.7;}
+  .legend b{color:var(--ink);}
+
+  .toolbar{display:flex; gap:10px; margin-bottom:16px;}
+  button.tb{background:var(--panel); border:1px solid var(--rule); color:var(--ink); padding:9px 16px; border-radius:6px; font-size:13px; cursor:pointer; font-family:inherit;}
+  button.tb:hover{border-color:var(--accent);}
+  button.tb.primary{background:var(--accent); color:#0f172a; border-color:var(--accent); font-weight:600;}
+
+  .table-wrap{overflow-x:auto; border:1px solid var(--rule); border-radius:10px;}
+  table{width:100%; border-collapse:collapse; font-size:13px; min-width:920px;}
+  th{background:var(--editor-bg); font-family:'JetBrains Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); padding:10px 8px; text-align:left; border-bottom:1px solid var(--rule); white-space:nowrap;}
+  td{padding:6px 8px; border-bottom:1px solid var(--rule); vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  input[type=text]{background:var(--editor-bg); border:1px solid var(--rule); color:var(--ink); padding:7px 9px; border-radius:5px; font-size:13px; width:100%; font-family:inherit;}
+  input[type=number]{background:var(--editor-bg); border:1px solid var(--rule); color:var(--ink); padding:7px 6px; border-radius:5px; font-size:13px; width:52px; text-align:center; font-family:inherit;}
+  .total-cell{font-weight:700; font-family:'JetBrains Mono',monospace; text-align:center; color:var(--accent);}
+  .rm-btn{background:none; border:none; color:#f97373; cursor:pointer; font-size:16px; padding:4px 8px;}
+  .rm-btn:hover{color:#fca5a5;}
+
+  .footer-nav{display:flex; justify-content:space-between; padding:14px 28px; border-top:1px solid var(--rule); font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:30px;}
+  .footer-nav a{color:var(--accent); text-decoration:none;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <span>UC <b>Teste de Sistemas</b> · Aula 12 — Painel do Professor</span>
+  <span>Spring + Testes de Serviço</span>
+</div>
+
+<div class="wrap">
+  <h1>Feedback — Aula 12</h1>
+  <p class="sub">Avalie cada critério de 0 a 2. O total (0–10) é calculado automaticamente.</p>
+
+  <div class="legend">
+    <b>C1 · @Service correto</b> — dependência injetada via construtor, sem acoplamento a implementação concreta.<br>
+    <b>C2 · Teste sem Spring</b> — uso de Mockito puro, sem @SpringBootTest desnecessário.<br>
+    <b>C3 · @Mock + @InjectMocks</b> — configuração correta, sem instanciação manual.<br>
+    <b>C4 · Cobertura de decisão</b> — todos os caminhos da regra de negócio testados.<br>
+    <b>C5 · Compreensão de IoC</b> — aluno entende a relação entre Injeção de Dependência e POO.
+  </div>
+
+  <div class="toolbar">
+    <button class="tb primary" onclick="addStudent()">+ Adicionar aluno</button>
+    <button class="tb" onclick="exportarCSV()">⬇ Exportar CSV</button>
+  </div>
+
+  <div class="table-wrap">
+    <table id="feedbackTable">
+      <thead>
+        <tr>
+          <th style="width:200px;">Aluno(a)</th>
+          <th>C1</th><th>C2</th><th>C3</th><th>C4</th><th>C5</th>
+          <th>Total</th>
+          <th style="width:260px;">Observações</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="footer-nav">
+  <a href="a12_desafio.html">← Desafio</a>
+  <a href="a12_exposicao.html">Rever Exposição ↻</a>
+</div>
+
+<script>
+  let rowCount = 0;
+
+  function addStudent(){
+    rowCount++;
+    const tbody = document.getElementById('tbody');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" placeholder="Nome do aluno" class="stu-name"></td>
+      <td><input type="number" min="0" max="2" value="0" class="crit" oninput="calcTotal(this)"></td>
+      <td><input type="number" min="0" max="2" value="0" class="crit" oninput="calcTotal(this)"></td>
+      <td><input type="number" min="0" max="2" value="0" class="crit" oninput="calcTotal(this)"></td>
+      <td><input type="number" min="0" max="2" value="0" class="crit" oninput="calcTotal(this)"></td>
+      <td><input type="number" min="0" max="2" value="0" class="crit" oninput="calcTotal(this)"></td>
+      <td class="total-cell">0</td>
+      <td><input type="text" placeholder="Observações" class="stu-obs"></td>
+      <td><button class="rm-btn" onclick="this.closest('tr').remove()">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  function calcTotal(el){
+    const tr = el.closest('tr');
+    const crits = tr.querySelectorAll('.crit');
+    let total = 0;
+    crits.forEach(c => total += Number(c.value || 0));
+    tr.querySelector('.total-cell').textContent = total;
+  }
+
+  function csvEscape(value){
+    const v = String(value ?? '');
+    if(v.includes(';') || v.includes('"') || v.includes('\n')){
+      return '"' + v.replace(/"/g, '""') + '"';
+    }
+    return v;
+  }
+
+  function exportarCSV(){
+    const rows = [['Aluno','C1','C2','C3','C4','C5','Total','Observações']];
+    document.querySelectorAll('#tbody tr').forEach(tr => {
+      const name = tr.querySelector('.stu-name').value;
+      const crits = Array.from(tr.querySelectorAll('.crit')).map(c => c.value || 0);
+      const total = tr.querySelector('.total-cell').textContent;
+      const obs = tr.querySelector('.stu-obs').value;
+      rows.push([name, ...crits, total, obs]);
+    });
+    const csvContent = rows.map(r => r.map(csvEscape).join(';')).join('\n');
+    const blob = new Blob(['\uFEFF' + csvContent], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const today = new Date().toISOString().slice(0,10);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `aula12-feedback-${today}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // Inicia com 3 linhas em branco
+  addStudent(); addStudent(); addStudent();
+</script>
+
+</body>
+</html>

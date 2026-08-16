@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 04 — Demo ao Vivo | Teste de Sistemas</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1b2b4d; --ink:#e6ebf5; --muted:#93a3c2;
+    --accent:#4ade80; --rule:#2b3a5e; --editor-bg:#0b1424;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; height:100vh; display:flex; flex-direction:column; overflow:hidden;}
+  .hdr{display:flex; justify-content:space-between; align-items:center; padding:14px 28px; border-bottom:1px solid var(--rule); font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);}
+  .hdr b{color:var(--accent);}
+
+  .main{flex:1; display:flex; overflow:hidden;}
+  .panel{flex:1; display:flex; flex-direction:column; overflow:hidden;}
+  .panel.editor{border-right:1px solid var(--rule);}
+
+  .panel-title{padding:10px 20px; font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); border-bottom:1px solid var(--rule);}
+
+  .code-area{
+    flex:1; background:var(--editor-bg); padding:20px 24px; font-family:'JetBrains Mono',monospace;
+    font-size:13.5px; line-height:1.7; overflow-y:auto; white-space:pre-wrap; word-break:break-word;
+  }
+  .k{color:#c792ea;} .a{color:#82aaff;} .s{color:#c3e88d;} .t{color:#ffcb6b;} .c{color:#546e8a;} .fn{color:#82aaff;}
+  .cursor{display:inline-block; width:8px; background:var(--accent); animation:blink 1s step-end infinite;}
+  @keyframes blink{50%{opacity:0;}}
+
+  .preview-area{flex:1; padding:0; overflow-y:auto; display:flex; align-items:stretch; justify-content:center;}
+  .terminal{background:#000; color:#c3e88d; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.7; padding:20px 22px; width:100%; white-space:pre-wrap;}
+  .terminal .prompt{color:#82aaff;}
+  .terminal .ok-line{color:#4ade80;}
+  .terminal .err-line{color:#f97373;}
+  .obj-empty{color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:13px; text-align:center; padding-top:40px; width:100%;}
+
+  .narration{padding:14px 28px; border-top:1px solid var(--rule); font-size:14px; color:var(--muted); min-height:20px;}
+  .narration b{color:var(--ink);}
+
+  .controls{display:flex; align-items:center; gap:14px; padding:14px 28px; border-top:1px solid var(--rule);}
+  button.ctrl{background:var(--panel); border:1px solid var(--rule); color:var(--ink); padding:9px 18px; border-radius:6px; font-size:13px; cursor:pointer; font-family:inherit;}
+  button.ctrl:hover{border-color:var(--accent);}
+  button.ctrl:disabled{opacity:.4; cursor:not-allowed;}
+  .progress-bar{flex:1; height:6px; background:var(--panel); border-radius:3px; overflow:hidden;}
+  .progress-fill{height:100%; background:var(--accent); width:0%; transition:width .3s;}
+  .step-label{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); min-width:70px; text-align:right;}
+
+  .footer-nav{display:flex; justify-content:space-between; padding:12px 28px; border-top:1px solid var(--rule); font-family:'JetBrains Mono',monospace; font-size:12px;}
+  .footer-nav a{color:var(--accent); text-decoration:none;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <span>UC <b>Teste de Sistemas</b> · Aula 04 — Demo ao Vivo</span>
+  <span>Testando com AAA e assertThrows</span>
+</div>
+
+<div class="main">
+  <div class="panel editor">
+    <div class="panel-title">Editor — RetanguloTest.java</div>
+    <div class="code-area" id="codeArea"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Preview — terminal</div>
+    <div class="preview-area" id="previewArea">
+      <div class="obj-empty">Aguardando a execução dos testes...<br>Acompanhe a construção ao lado →</div>
+    </div>
+  </div>
+</div>
+
+<div class="narration" id="narration">Clique em <b>Iniciar digitação</b> para começar a construção da classe <b>Produto</b>.</div>
+
+<div class="controls">
+  <button class="ctrl" id="btnPrev" onclick="prevStep()">← Anterior</button>
+  <button class="ctrl" id="btnPlay" onclick="playStep()">▶ Iniciar digitação</button>
+  <button class="ctrl" id="btnNext" onclick="nextStep()">Próxima →</button>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="step-label" id="stepLabel">Etapa 0/5</div>
+</div>
+
+<div class="footer-nav">
+  <a href="a04_exposicao.html">← Exposição</a>
+  <a href="a04_pratica_guiada.html">Prática Guiada →</a>
+</div>
+
+<script>
+const steps = [
+  {
+    narration: "Etapa 1 — Arrange: criamos o objeto Retangulo que vamos usar no teste.",
+    code: `<span class="fn">@Test</span>\n<span class="k">void</span> <span class="fn">calcularAreaDeveMultiplicarLados</span>() {\n    <span class="c">// Arrange</span>\n    <span class="t">Retangulo</span> retangulo = <span class="k">new</span> <span class="fn">Retangulo</span>(<span class="s">4.0</span>, <span class="s">5.0</span>);\n}`,
+    preview: null
+  },
+  {
+    narration: "Etapa 2 — Act: chamamos o método que está sendo testado.",
+    code: `    <span class="c">// Act</span>\n    <span class="k">double</span> area = retangulo.calcularArea();`,
+    preview: null
+  },
+  {
+    narration: "Etapa 3 — Assert: verificamos se o resultado é o esperado.",
+    code: `    <span class="c">// Assert</span>\n    assertEquals(<span class="s">20.0</span>, area);\n}`,
+    preview: null
+  },
+  {
+    narration: "Etapa 4 — Agora testamos o caminho de exceção com assertThrows.",
+    code: `<span class="fn">@Test</span>\n<span class="k">void</span> <span class="fn">larguraInvalidaDeveLancarExcecao</span>() {\n    assertThrows(\n        <span class="t">IllegalArgumentException</span>.<span class="k">class</span>,\n        () -> <span class="k">new</span> <span class="fn">Retangulo</span>(-<span class="s">1</span>, <span class="s">5.0</span>)\n    );\n}`,
+    preview: null
+  },
+  {
+    narration: "Etapa 5 — Rodamos toda a classe RetanguloTest e conferimos o resultado →",
+    code: `<span class="c">// Classe de teste completa e salva.</span>\n<span class="c">// Rodando pelo IntelliJ (Run 'RetanguloTest'):</span>`,
+    preview: "terminal"
+  }
+];
+
+let current = -1;
+let typing = false;
+
+function updateControls(){
+  document.getElementById('btnPrev').disabled = current <= 0;
+  document.getElementById('btnPlay').disabled = typing;
+  document.getElementById('btnNext').disabled = current >= steps.length - 1 || typing;
+  document.getElementById('stepLabel').textContent = `Etapa ${Math.max(current+1,0)}/${steps.length}`;
+  document.getElementById('progressFill').style.width = `${Math.max(current+1,0) / steps.length * 100}%`;
+}
+
+function renderPreview(step){
+  const area = document.getElementById('previewArea');
+  if(!step || !step.preview){
+    area.innerHTML = '<div class="obj-empty">Aguardando a execução dos testes...<br>Acompanhe a construção ao lado →</div>';
+    return;
+  }
+  area.innerHTML = `
+    <div class="terminal">Run: <span class="prompt">RetanguloTest</span>
+
+<span class="ok-line">✓ calcularAreaDeveMultiplicarLados</span>
+<span class="ok-line">✓ calcularPerimetroDeveSomarTodosOsLados</span>
+<span class="ok-line">✓ larguraInvalidaDeveLancarExcecao</span>
+<span class="ok-line">✓ retanguloDeveTerTodosOsDadosCorretos</span>
+
+<span class="ok-line">Tests passed: 4 of 4 test — 11ms</span></div>`;
+}
+
+async function typeCode(html){
+  const area = document.getElementById('codeArea');
+  area.innerHTML = '<span class="cursor">&nbsp;</span>';
+  typing = true;
+  updateControls();
+
+  // Parse html into a flat sequence of characters, preserving tags as atomic tokens
+  const tokens = html.match(/<[^>]+>|[\s\S]/g) || [];
+  let built = '';
+  for(const tok of tokens){
+    if(tok.startsWith('<')){
+      built += tok;
+      area.innerHTML = built + '<span class="cursor">&nbsp;</span>';
+      continue;
+    }
+    built += tok;
+    area.innerHTML = built + '<span class="cursor">&nbsp;</span>';
+    let delay;
+    if(tok === '\n') delay = 60;
+    else if(tok === ' ') delay = 20;
+    else delay = 18 + Math.random() * 25;
+    await new Promise(r => setTimeout(r, delay));
+    area.scrollTop = area.scrollHeight;
+  }
+  area.innerHTML = built;
+  typing = false;
+  updateControls();
+}
+
+async function playStep(){
+  if(typing) return;
+  if(current === -1) current = 0;
+  const step = steps[current];
+  document.getElementById('narration').innerHTML = step.narration;
+  document.getElementById('btnPlay').textContent = '↻ Rever';
+  await typeCode(step.code);
+  renderPreview(step);
+  updateControls();
+}
+
+function nextStep(){
+  if(typing || current >= steps.length - 1) return;
+  current++;
+  const step = steps[current];
+  document.getElementById('narration').innerHTML = step.narration;
+  document.getElementById('codeArea').innerHTML = step.code;
+  renderPreview(step);
+  document.getElementById('btnPlay').textContent = '↻ Rever';
+  updateControls();
+}
+
+function prevStep(){
+  if(typing || current <= 0) return;
+  current--;
+  const step = steps[current];
+  document.getElementById('narration').innerHTML = step.narration;
+  document.getElementById('codeArea').innerHTML = step.code;
+  renderPreview(step);
+  updateControls();
+}
+
+updateControls();
+</script>
+
+</body>
+</html>

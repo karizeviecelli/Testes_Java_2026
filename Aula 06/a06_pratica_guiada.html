@@ -1,0 +1,120 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aula 06 — Prática guiada</title><style>
+:root{--bg:#08111f;--panel:#12233e;--ink:#edf4ff;--muted:#a9bad5;--accent:#4ade80;--blue:#60a5fa;--amber:#fbbf24;--rule:#294261;--code:#07101d}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif}.hdr{display:flex;justify-content:space-between;gap:15px;padding:11px 22px;border-bottom:1px solid var(--rule);font-size:12px;color:var(--muted)}.hdr b,.track a.active{color:var(--accent)}.track{display:flex;gap:7px}.track a{color:var(--muted);text-decoration:none}.wrap{width:min(1000px,100%);margin:auto;padding:32px 22px 52px;flex:1}h1{font-size:clamp(28px,4vw,42px);margin:0 0 8px}.sub{color:var(--muted);line-height:1.6}.bar{height:5px;background:var(--panel);border-radius:5px;margin:20px 0}.fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--blue));transition:.25s}.step{background:var(--panel);border:1px solid var(--rule);border-radius:10px;margin:10px 0;overflow:hidden}.step.done{border-color:var(--accent)}.step-head{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer}.num{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--code);color:var(--accent);font:800 12px "JetBrains Mono",monospace}.step.done .num{background:var(--accent);color:var(--bg)}.title{font-weight:750;flex:1}.arrow{color:var(--muted)}.step.open .arrow{transform:rotate(90deg)}.body{display:none;border-top:1px solid var(--rule)}.step.open .body{display:block}.inside{padding:17px 18px}.inside p,.hint{color:var(--muted);line-height:1.55}.code{background:var(--code);border:1px solid var(--rule);border-radius:9px;overflow:auto;margin:12px 0}.code pre{margin:0;padding:15px;font:12px/1.58 "JetBrains Mono",Consolas,monospace;color:#dbeafe}.k{color:#c792ea}.t{color:#ffcb6b}.s{color:#c3e88d}.c{color:#6f86a8;font-style:italic}.a{color:#89ddff}.n{color:#f78c6c}.actions{display:flex;gap:8px}button{border:1px solid var(--rule);background:var(--code);color:var(--ink);padding:8px 11px;border-radius:6px;cursor:pointer}.done-btn{background:var(--accent);color:var(--bg);font-weight:800}.hint{display:none;background:rgba(251,191,36,.08);border-left:3px solid var(--amber);padding:11px 13px;margin-top:10px}.hint.show{display:block}.footer{display:flex;justify-content:space-between;padding:11px 22px;border-top:1px solid var(--rule);font-size:12px}.footer a{color:var(--accent);text-decoration:none}@media(max-width:700px){.track{display:none}.wrap{padding:24px 14px 40px}.hdr span:last-child{display:none}.code pre{font-size:10.6px}}
+</style></head><body><header class="hdr"><span>UC <b>Teste de Sistemas</b> · Aula 06 — Prática guiada</span><nav class="track"><a href="a06_exposicao.html">Exposição</a><a href="a06_demo_ao_vivo.html">Demo</a><a class="active" href="a06_pratica_guiada.html">Prática</a><a href="a06_desafio.html">Desafio</a><a href="a06_feedback.html">Feedback</a></nav><span>7 etapas · aproximadamente 80 min</span></header><main class="wrap"><h1>Prática guiada — formas geométricas organizadas</h1><p class="sub">Construa a hierarquia, organize a suíte por contexto e verifique as regras específicas e o comportamento polimórfico.</p><div class="bar"><div class="fill" id="fill"></div></div>
+<section class="step open"><div class="step-head"><span class="num">1</span><span class="title">Criar a superclasse abstrata</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Crie o contrato comum em <code>FormaGeometrica.java</code>.</p><div class="code"><pre><span class="k">package</span> org.example.formas;
+
+<span class="k">public abstract class</span> <span class="t">FormaGeometrica</span> {
+    <span class="c">// Obriga cada forma concreta a fornecer sua fórmula.</span>
+    <span class="k">public abstract double</span> calcularArea();
+
+    <span class="c">// Método concreto herdado pelas subclasses.</span>
+    <span class="k">public</span> <span class="t">String</span> descricao() {
+        <span class="k">return</span> <span class="s">"Forma geométrica"</span>;
+    }
+}</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">Tente instanciar <code>FormaGeometrica</code>. O compilador impedirá, pois a classe é abstrata.</div></div></div></section>
+<section class="step"><div class="step-head"><span class="num">2</span><span class="title">Implementar Quadrado com validação</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>A subclasse deve herdar de <code>FormaGeometrica</code>, validar o lado e sobrescrever o cálculo.</p><div class="code"><pre><span class="k">package</span> org.example.formas;
+
+<span class="k">public class</span> <span class="t">Quadrado</span> <span class="k">extends</span> <span class="t">FormaGeometrica</span> {
+    <span class="k">private final double</span> lado;
+
+    <span class="k">public</span> Quadrado(<span class="k">double</span> lado) {
+        <span class="k">if</span> (lado &lt;= <span class="n">0</span>) {
+            <span class="k">throw new</span> <span class="t">IllegalArgumentException</span>(
+                <span class="s">"O lado deve ser maior que zero."</span>
+            );
+        }
+        <span class="k">this</span>.lado = lado;
+    }
+
+    <span class="a">@Override</span>
+    <span class="k">public double</span> calcularArea() {
+        <span class="k">return</span> lado * lado;
+    }
+}</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint"><code>@Override</code> pede ao compilador para confirmar que o método realmente sobrescreve o contrato.</div></div></div></section>
+<section class="step"><div class="step-head"><span class="num">3</span><span class="title">Implementar Círculo com validação</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Repita a estrutura, mas use a regra π × raio².</p><div class="code"><pre><span class="k">package</span> org.example.formas;
+
+<span class="k">public class</span> <span class="t">Circulo</span> <span class="k">extends</span> <span class="t">FormaGeometrica</span> {
+    <span class="k">private final double</span> raio;
+
+    <span class="k">public</span> Circulo(<span class="k">double</span> raio) {
+        <span class="k">if</span> (raio &lt;= <span class="n">0</span>) {
+            <span class="k">throw new</span> <span class="t">IllegalArgumentException</span>(
+                <span class="s">"O raio deve ser maior que zero."</span>
+            );
+        }
+        <span class="k">this</span>.raio = raio;
+    }
+
+    <span class="a">@Override</span>
+    <span class="k">public double</span> calcularArea() {
+        <span class="k">return</span> Math.PI * raio * raio;
+    }
+}</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">O resultado usa <code>Math.PI</code>; os testes precisarão de delta.</div></div></div></section>
+<section class="step"><div class="step-head"><span class="num">4</span><span class="title">Criar a estrutura de testes aninhados</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Prepare a classe de teste com três contextos: Quadrado, Círculo e Polimorfismo.</p><div class="code"><pre><span class="k">package</span> org.example.formas;
+
+<span class="k">import</span> org.junit.jupiter.api.*;
+<span class="k">import static</span> org.junit.jupiter.api.Assertions.*;
+
+<span class="a">@DisplayName</span>(<span class="s">"Hierarquia de formas geométricas"</span>)
+<span class="k">class</span> <span class="t">FormaGeometricaTest</span> {
+
+    <span class="a">@Nested</span>
+    <span class="a">@DisplayName</span>(<span class="s">"Ao trabalhar com Quadrado"</span>)
+    <span class="k">class</span> <span class="t">TestesQuadrado</span> { }
+
+    <span class="a">@Nested</span>
+    <span class="a">@Tag</span>(<span class="s">"geometria-circular"</span>)
+    <span class="a">@DisplayName</span>(<span class="s">"Ao trabalhar com Círculo"</span>)
+    <span class="k">class</span> <span class="t">TestesCirculo</span> { }
+
+    <span class="a">@Nested</span>
+    <span class="a">@DisplayName</span>(<span class="s">"Ao usar formas polimorficamente"</span>)
+    <span class="k">class</span> <span class="t">TestesPolimorfismo</span> { }
+}</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">As classes internas não levam <code>static</code>. Caso contrário, o JUnit não as tratará como contextos aninhados.</div></div></div></section>
+<section class="step"><div class="step-head"><span class="num">5</span><span class="title">Adicionar cálculos e validações aos grupos</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Inclua estes métodos nas respectivas classes aninhadas.</p><div class="code"><pre><span class="c">// Dentro de TestesQuadrado</span>
+<span class="a">@Test</span>
+<span class="a">@DisplayName</span>(<span class="s">"Lado 4 deve produzir área 16"</span>)
+<span class="k">void</span> areaDeveSerLadoAoQuadrado() {
+    <span class="t">Quadrado</span> quadrado = <span class="k">new</span> <span class="t">Quadrado</span>(<span class="n">4.0</span>);
+    assertEquals(<span class="n">16.0</span>, quadrado.calcularArea(), <span class="n">0.001</span>);
+}
+
+<span class="a">@Test</span>
+<span class="a">@DisplayName</span>(<span class="s">"Lado zero deve ser rejeitado"</span>)
+<span class="k">void</span> ladoZeroDeveLancarExcecao() {
+    <span class="t">IllegalArgumentException</span> erro = assertThrows(
+        <span class="t">IllegalArgumentException</span>.<span class="k">class</span>,
+        () -&gt; <span class="k">new</span> <span class="t">Quadrado</span>(<span class="n">0</span>)
+    );
+    assertEquals(<span class="s">"O lado deve ser maior que zero."</span>, erro.getMessage());
+}
+
+<span class="c">// Dentro de TestesCirculo</span>
+<span class="a">@Test</span>
+<span class="a">@DisplayName</span>(<span class="s">"Raio 2 deve produzir área igual a 4π"</span>)
+<span class="k">void</span> areaDeveUsarPi() {
+    <span class="t">Circulo</span> circulo = <span class="k">new</span> <span class="t">Circulo</span>(<span class="n">2.0</span>);
+    assertEquals(Math.PI * <span class="n">4</span>, circulo.calcularArea(), <span class="n">0.0001</span>);
+}</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">Cada grupo deve reunir tanto o caminho válido quanto as validações específicas da subclasse.</div></div></div></section>
+<section class="step"><div class="step-head"><span class="num">6</span><span class="title">Adicionar o teste polimórfico</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Use o tipo da superclasse nas referências e verifique os resultados das implementações reais.</p><div class="code"><pre><span class="c">// Dentro de TestesPolimorfismo</span>
+<span class="a">@Test</span>
+<span class="a">@DisplayName</span>(<span class="s">"Cada objeto deve executar sua própria fórmula"</span>)
+<span class="k">void</span> cadaFormaDeveCalcularSuaArea() {
+    <span class="t">FormaGeometrica</span> forma1 = <span class="k">new</span> <span class="t">Quadrado</span>(<span class="n">3.0</span>);
+    <span class="t">FormaGeometrica</span> forma2 = <span class="k">new</span> <span class="t">Circulo</span>(<span class="n">1.0</span>);
+
+    assertAll(
+        () -&gt; assertEquals(<span class="n">9.0</span>, forma1.calcularArea(), <span class="n">0.001</span>),
+        () -&gt; assertEquals(Math.PI, forma2.calcularArea(), <span class="n">0.0001</span>)
+    );
+}</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">O teste não chama métodos específicos de Quadrado ou Círculo: ele usa apenas o contrato <code>FormaGeometrica</code>.</div></div></div></section>
+<section class="step"><div class="step-head"><span class="num">7</span><span class="title">Executar e ler a árvore de resultados</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Execute a classe inteira e depois filtre apenas a tag <code>geometria-circular</code>.</p><div class="code"><pre>Hierarquia de formas geométricas
+├─ Ao trabalhar com Quadrado ✔
+├─ Ao trabalhar com Círculo ✔
+└─ Ao usar formas polimorficamente ✔
+
+Filtro: geometria-circular
+└─ Ao trabalhar com Círculo ✔</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">Se todos os testes aparecem em uma lista plana, confira se as classes realmente têm <code>@Nested</code>.</div></div></div></section>
+</main><footer class="footer"><a href="a06_demo_ao_vivo.html">← Demonstração</a><a href="a06_desafio.html">Desafio autônomo →</a></footer><script>
+const steps=[...document.querySelectorAll('.step')],done=new Set();function refresh(){steps.forEach((s,i)=>s.classList.toggle('done',done.has(i)));document.getElementById('fill').style.width=`${done.size/steps.length*100}%`}steps.forEach((s,i)=>{s.querySelector('.step-head').onclick=()=>{const open=s.classList.contains('open');steps.forEach(x=>x.classList.remove('open'));if(!open)s.classList.add('open')};s.querySelector('.hint-btn').onclick=e=>{e.stopPropagation();s.querySelector('.hint').classList.toggle('show')};s.querySelector('.done-btn').onclick=e=>{e.stopPropagation();done.add(i);refresh();s.classList.remove('open');const next=steps[i+1];if(next){next.classList.add('open');next.scrollIntoView({behavior:'smooth',block:'center'})}}});refresh();
+</script></body></html>

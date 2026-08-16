@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 13 — Desafio | Teste de Sistemas</title>
+<style>
+  :root{--bg:#0f172a; --panel:#1b2b4d; --ink:#e6ebf5; --muted:#93a3c2; --accent:#4ade80; --amber:#fbbf24; --danger:#f97373; --rule:#2b3a5e;}
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; min-height:100vh; display:flex; flex-direction:column;}
+  .hdr{display:flex; justify-content:space-between; align-items:center; padding:14px 28px; border-bottom:1px solid var(--rule); font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);}
+  .hdr b{color:var(--accent);}
+
+  .wrap{max-width:720px; margin:0 auto; padding:36px 24px 60px; width:100%; flex:1;}
+  h1{font-size:26px; margin:0 0 6px;}
+  p.sub{color:var(--muted); font-size:14.5px; margin:0 0 26px; line-height:1.6;}
+
+  .timer-box{background:var(--panel); border:1px solid var(--rule); border-radius:12px; padding:24px; text-align:center; margin-bottom:28px;}
+  .timer-display{font-family:'JetBrains Mono',monospace; font-size:52px; font-weight:700; letter-spacing:.03em;}
+  .timer-display.warn{color:var(--danger); animation:pulse 1s infinite;}
+  @keyframes pulse{50%{opacity:.5;}}
+  .timer-label{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-top:6px;}
+  .timer-controls{display:flex; gap:10px; justify-content:center; margin-top:18px;}
+  button.tctrl{background:#0b1424; border:1px solid var(--rule); color:var(--ink); padding:9px 18px; border-radius:6px; font-size:13px; cursor:pointer; font-family:inherit;}
+  button.tctrl:hover{border-color:var(--accent);}
+  button.tctrl.primary{background:var(--accent); color:#0f172a; border-color:var(--accent); font-weight:600;}
+
+  .task-desc{background:var(--panel); border:1px solid var(--rule); border-radius:10px; padding:20px 22px; margin-bottom:20px; font-size:14.5px; line-height:1.6;}
+  .task-desc b{color:var(--accent);}
+
+  .checklist{list-style:none; padding:0; margin:0;}
+  .checklist li{
+    display:flex; align-items:flex-start; gap:12px; background:var(--panel); border:1px solid var(--rule);
+    border-radius:8px; padding:14px 16px; margin-bottom:10px; cursor:pointer; transition:.15s;
+  }
+  .checklist li:hover{border-color:var(--muted);}
+  .checklist li.checked{border-color:var(--accent); background:rgba(74,222,128,.08);}
+  .chk-box{width:20px; height:20px; border-radius:5px; border:2px solid var(--rule); flex-shrink:0; margin-top:1px; display:flex; align-items:center; justify-content:center; font-size:13px;}
+  .checklist li.checked .chk-box{background:var(--accent); border-color:var(--accent); color:#0f172a;}
+  .chk-text{font-size:14px;}
+
+  .summary{display:none; background:rgba(74,222,128,.1); border:1px solid var(--accent); border-radius:10px; padding:20px 22px; margin-top:20px; text-align:center;}
+  .summary.show{display:block;}
+  .summary h3{margin:0 0 6px; color:var(--accent);}
+  .summary p{margin:0; color:var(--muted); font-size:14px;}
+
+  .footer-nav{display:flex; justify-content:space-between; padding:14px 28px; border-top:1px solid var(--rule); font-family:'JetBrains Mono',monospace; font-size:12px;}
+  .footer-nav a{color:var(--accent); text-decoration:none;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <span>UC <b>Teste de Sistemas</b> · Aula 13 — Desafio Autônomo</span>
+  <span>Trabalho individual · sem passo a passo</span>
+</div>
+
+<div class="wrap">
+  <h1>Desafio: seu próprio Repository com H2</h1>
+  <p class="sub">Sem roteiro: crie uma nova entidade e Repository, com pelo menos uma consulta customizada, e teste tudo com @DataJpaTest.</p>
+
+  <div class="timer-box">
+    <div class="timer-display" id="timerDisplay">20:00</div>
+    <div class="timer-label">Tempo restante</div>
+    <div class="timer-controls">
+      <button class="tctrl primary" id="btnStart" onclick="timerClick()">Iniciar</button>
+      <button class="tctrl" onclick="timerReset()">Zerar</button>
+    </div>
+  </div>
+
+  <div class="task-desc">
+    Escolha uma entidade nova (ex.: <b>Comentario</b>, <b>Avaliacao</b>, <b>Pedido</b>) e crie sua @Entity + Repository (extends JpaRepository), com pelo menos um método de consulta customizado.
+  </div>
+
+  <ul class="checklist" id="checklist">
+    <li onclick="toggleItem(this)"><div class="chk-box"></div><div class="chk-text">Entidade anotada com @Entity, @Id e @GeneratedValue configurados corretamente</div></li>
+    <li onclick="toggleItem(this)"><div class="chk-box"></div><div class="chk-text">Repository criado, estendendo JpaRepository</div></li>
+    <li onclick="toggleItem(this)"><div class="chk-box"></div><div class="chk-text">Pelo menos um método de consulta customizado (findByAlgumAtributo)</div></li>
+    <li onclick="toggleItem(this)"><div class="chk-box"></div><div class="chk-text">Classe de teste anotada com @DataJpaTest, usando @Autowired</div></li>
+    <li onclick="toggleItem(this)"><div class="chk-box"></div><div class="chk-text">Teste confirmando geração automática de ID ao salvar</div></li>
+    <li onclick="toggleItem(this)"><div class="chk-box"></div><div class="chk-text">Teste confirmando o funcionamento do método customizado</div></li>
+  </ul>
+
+  <div class="summary" id="summary">
+    <h3>🎉 Desafio concluído!</h3>
+    <p>Você já sabe testar a camada de Repository com H2. Na Aula 14, subimos para o Controller, testando os endpoints REST.</p>
+  </div>
+</div>
+
+<div class="footer-nav">
+  <a href="a13_pratica_guiada.html">← Prática</a>
+  <a href="a13_feedback.html">Feedback →</a>
+</div>
+
+<script>
+  let seconds = 20 * 60;
+  let running = false;
+  let intervalId = null;
+
+  function render(){
+    const m = Math.floor(seconds / 60).toString().padStart(2,'0');
+    const s = (seconds % 60).toString().padStart(2,'0');
+    const el = document.getElementById('timerDisplay');
+    el.textContent = `${m}:${s}`;
+    el.classList.toggle('warn', seconds <= 300 && seconds > 0);
+  }
+
+  function timerClick(){
+    const btn = document.getElementById('btnStart');
+    if(!running){
+      running = true;
+      btn.textContent = 'Pausar';
+      intervalId = setInterval(() => {
+        if(seconds > 0){
+          seconds--;
+          render();
+        } else {
+          clearInterval(intervalId);
+          running = false;
+          btn.textContent = 'Iniciar';
+        }
+      }, 1000);
+    } else {
+      running = false;
+      btn.textContent = 'Iniciar';
+      clearInterval(intervalId);
+    }
+  }
+
+  function timerReset(){
+    clearInterval(intervalId);
+    running = false;
+    seconds = 20 * 60;
+    document.getElementById('btnStart').textContent = 'Iniciar';
+    render();
+  }
+
+  function toggleItem(li){
+    li.classList.toggle('checked');
+    const total = document.querySelectorAll('.checklist li').length;
+    const checked = document.querySelectorAll('.checklist li.checked').length;
+    document.getElementById('summary').classList.toggle('show', checked === total);
+  }
+
+  render();
+</script>
+
+</body>
+</html>
