@@ -1,7 +1,7 @@
-package Aula3;
+package entregas.Aula3;
 
 // Importa as asserções estáticas do JUnit 5.
-import atividades.Aula3.ContaBancaria;
+import entregas.Aula3.ContaBancaria;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

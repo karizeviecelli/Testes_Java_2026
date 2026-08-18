@@ -1,4 +1,4 @@
-package atividades.Aula3;
+package entregas.Aula3;
 
 public class Triangulo {
     private double ladoA;

@@ -1,4 +1,4 @@
-package atividades.Aula2;
+package entregas.Aula2;
 
 public class Pedido {
     private double valorTotal;

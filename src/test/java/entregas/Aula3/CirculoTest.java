@@ -1,6 +1,6 @@
-package Aula3;
+package entregas.Aula3;
 
-import atividades.Aula3.Circulo;
+import entregas.Aula3.Circulo;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

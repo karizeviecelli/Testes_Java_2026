@@ -1,6 +1,6 @@
-package Aula2;
+package entregas.Aula2;
 
-import atividades.Aula2.Cliente;
+import entregas.Aula2.Cliente;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
