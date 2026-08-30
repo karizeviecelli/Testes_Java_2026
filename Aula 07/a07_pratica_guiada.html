@@ -1,253 +1,57 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aula 07 — Prática Guiada | Teste de Sistemas</title>
-<style>
-  :root{--bg:#0f172a; --panel:#1b2b4d; --ink:#e6ebf5; --muted:#93a3c2; --accent:#4ade80; --rule:#2b3a5e; --editor-bg:#0b1424;}
-  *{box-sizing:border-box;}
-  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; min-height:100vh; display:flex; flex-direction:column;}
-  .hdr{display:flex; justify-content:space-between; align-items:center; padding:14px 28px; border-bottom:1px solid var(--rule); font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);}
-  .hdr b{color:var(--accent);}
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aula 07 — Prática guiada</title><style>
+:root{--bg:#08111f;--panel:#12233e;--ink:#edf4ff;--muted:#a9bad5;--accent:#4ade80;--blue:#60a5fa;--amber:#fbbf24;--rule:#294261;--code:#07101d}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif}.hdr{display:flex;justify-content:space-between;gap:15px;padding:11px 22px;border-bottom:1px solid var(--rule);font-size:12px;color:var(--muted)}.hdr b,.track a.active{color:var(--accent)}.track{display:flex;gap:7px}.track a{color:var(--muted);text-decoration:none}.wrap{width:min(1000px,100%);margin:auto;padding:32px 22px 52px;flex:1}h1{font-size:clamp(28px,4vw,42px);margin:0 0 8px}.sub{color:var(--muted);line-height:1.6}.bar{height:5px;background:var(--panel);border-radius:5px;margin:20px 0}.fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--blue));transition:.25s}.step{background:var(--panel);border:1px solid var(--rule);border-radius:10px;margin:10px 0;overflow:hidden}.step.done{border-color:var(--accent)}.step-head{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer}.num{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--code);color:var(--accent);font:800 12px "JetBrains Mono",monospace}.step.done .num{background:var(--accent);color:var(--bg)}.title{font-weight:750;flex:1}.arrow{color:var(--muted)}.step.open .arrow{transform:rotate(90deg)}.body{display:none;border-top:1px solid var(--rule)}.step.open .body{display:block}.inside{padding:17px 18px}.inside p,.hint{color:var(--muted);line-height:1.55}.code{background:var(--code);border:1px solid var(--rule);border-radius:9px;overflow:auto;margin:12px 0}.code pre{margin:0;padding:15px;font:12px/1.58 "JetBrains Mono",Consolas,monospace;color:#dbeafe}.k{color:#c792ea}.t{color:#ffcb6b}.s{color:#c3e88d}.c{color:#6f86a8;font-style:italic}.a{color:#89ddff}.n{color:#f78c6c}.actions{display:flex;gap:8px}button{border:1px solid var(--rule);background:var(--code);color:var(--ink);padding:8px 11px;border-radius:6px;cursor:pointer}.done-btn{background:var(--accent);color:var(--bg);font-weight:800}.hint{display:none;background:rgba(251,191,36,.08);border-left:3px solid var(--amber);padding:11px 13px;margin-top:10px}.hint.show{display:block}.footer{display:flex;justify-content:space-between;padding:11px 22px;border-top:1px solid var(--rule);font-size:12px}.footer a{color:var(--accent);text-decoration:none}@media(max-width:700px){.track{display:none}.wrap{padding:24px 14px 40px}.hdr span:last-child{display:none}.code pre{font-size:10.6px}}
+</style></head><body><header class="hdr"><span>UC <b>Teste de Sistemas</b> · Aula 07 — Prática guiada</span><nav class="track"><a href="a07_exposicao.html">Exposição</a><a href="a07_demo_ao_vivo.html">Demo</a><a class="active" href="a07_pratica_guiada.html">Prática</a><a href="a07_desafio.html">Desafio</a><a href="a07_feedback.html">Feedback</a></nav><span>7 etapas · aproximadamente 80 min</span></header><main class="wrap"><h1>Prática guiada — pedido integrado</h1><p class="sub">Construa as unidades, integre-as gradualmente e use as evidências dos testes para diagnosticar uma falha.</p><div class="bar"><div class="fill" id="fill"></div></div><section class="step open"><div class="step-head"><span class="num">1</span><span class="title">Criar Produto com validação</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Implemente nome, preço, construtor e getters. Rejeite preço menor ou igual a zero.</p><div class="code"><pre>public class Produto {
+    private String nome;
+    private double preco;
 
-  .wrap{max-width:820px; margin:0 auto; padding:36px 24px 60px; width:100%;}
-  h1{font-size:26px; margin:0 0 6px;}
-  p.sub{color:var(--muted); font-size:14.5px; margin:0 0 24px;}
-
-  .progress-bar{height:6px; background:var(--panel); border-radius:3px; overflow:hidden; margin-bottom:28px;}
-  .progress-fill{height:100%; background:var(--accent); width:0%; transition:width .3s;}
-
-  .step{background:var(--panel); border:1px solid var(--rule); border-radius:10px; margin-bottom:14px; overflow:hidden;}
-  .step-hdr{display:flex; align-items:center; gap:14px; padding:16px 20px; cursor:pointer;}
-  .step-num{
-    width:30px; height:30px; border-radius:50%; background:var(--editor-bg); border:1px solid var(--rule);
-    display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:13px; flex-shrink:0;
-  }
-  .step.done .step-num{background:var(--accent); color:#0f172a; border-color:var(--accent);}
-  .step-title{flex:1; font-weight:600; font-size:15px;}
-  .step-arrow{color:var(--muted); transition:.2s;}
-  .step.open .step-arrow{transform:rotate(90deg);}
-
-  .step-body{max-height:0; overflow:hidden; transition:max-height .3s ease;}
-  .step.open .step-body{max-height:900px;}
-  .step-inner{padding:0 20px 20px 64px;}
-  .step-inner p{font-size:14.5px; color:var(--ink); line-height:1.6; margin:0 0 12px;}
-
-  .code-wrap{background:var(--editor-bg); border:1px solid var(--rule); border-radius:8px; padding:14px 18px; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.6; overflow-x:auto; margin:12px 0;}
-  .k{color:#c792ea;} .a{color:#82aaff;} .s{color:#c3e88d;} .t{color:#ffcb6b;} .c{color:#546e8a;} .fn{color:#82aaff;}
-
-  .step-actions{display:flex; gap:10px; margin-top:10px;}
-  button.hint-btn, button.done-btn{
-    font-family:inherit; font-size:12.5px; padding:8px 14px; border-radius:6px; cursor:pointer; border:1px solid var(--rule);
-  }
-  button.hint-btn{background:transparent; color:var(--muted);}
-  button.hint-btn:hover{border-color:var(--accent); color:var(--accent);}
-  button.done-btn{background:var(--accent); color:#0f172a; border-color:var(--accent); font-weight:600;}
-  .hint-box{display:none; background:#241a0b; border-left:3px solid #fbbf24; padding:10px 14px; font-size:13px; color:#fbbf24; border-radius:6px; margin-top:10px;}
-  .hint-box.show{display:block;}
-
-  .footer-nav{display:flex; justify-content:space-between; padding:14px 28px; border-top:1px solid var(--rule); font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:auto;}
-  .footer-nav a{color:var(--accent); text-decoration:none;}
-</style>
-</head>
-<body>
-
-<div class="hdr">
-  <span>UC <b>Teste de Sistemas</b> · Aula 07 — Prática Guiada</span>
-  <span>Criando dublês para um repositório</span>
-</div>
-
-<div class="wrap">
-  <h1>Prática guiada — testando com um Fake de repositório</h1>
-  <p class="sub">Siga os passos abaixo para criar um Fake funcional e usá-lo para testar uma classe de serviço isoladamente.</p>
-
-  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-
-  <div class="step" id="step-1">
-    <div class="step-hdr" onclick="toggleStep(1)">
-      <div class="step-num">1</div>
-      <div class="step-title">Definir a interface RepositorioUsuario</div>
-      <div class="step-arrow">▶</div>
-    </div>
-    <div class="step-body">
-      <div class="step-inner">
-        <p>Crie a interface com os métodos <code>salvar(Usuario)</code> e <code>buscarPorEmail(String)</code>.</p>
-        <div class="code-wrap"><pre>
-<span class="k">public interface</span> <span class="t">RepositorioUsuario</span> {
-    <span class="k">void</span> <span class="fn">salvar</span>(<span class="t">Usuario</span> usuario);
-    <span class="t">Usuario</span> <span class="fn">buscarPorEmail</span>(<span class="t">String</span> email);
-}
-        </pre></div>
-        <div class="step-actions">
-          <button class="hint-btn" onclick="toggleHint(1)">💡 Dica</button>
-          <button class="done-btn" onclick="markDone(1)">Marcar como concluído</button>
-        </div>
-        <div class="hint-box" id="hint-1">Interfaces definem "o que" uma classe deve fazer, sem dizer "como" — por isso são ideais para trocar a implementação real por um dublê.</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="step" id="step-2">
-    <div class="step-hdr" onclick="toggleStep(2)">
-      <div class="step-num">2</div>
-      <div class="step-title">Criar o Fake em memória</div>
-      <div class="step-arrow">▶</div>
-    </div>
-    <div class="step-body">
-      <div class="step-inner">
-        <p>Implemente <code>RepositorioUsuarioFake</code>, guardando os usuários em uma lista.</p>
-        <div class="code-wrap"><pre>
-<span class="k">public class</span> <span class="t">RepositorioUsuarioFake</span> <span class="k">implements</span> <span class="t">RepositorioUsuario</span> {
-    <span class="k">private</span> <span class="t">List</span>&lt;<span class="t">Usuario</span>&gt; usuarios = <span class="k">new</span> <span class="fn">ArrayList</span>&lt;&gt;();
-
-    <span class="fn">@Override</span>
-    <span class="k">public</span> <span class="k">void</span> <span class="fn">salvar</span>(<span class="t">Usuario</span> usuario) { usuarios.add(usuario); }
-
-    <span class="fn">@Override</span>
-    <span class="k">public</span> <span class="t">Usuario</span> <span class="fn">buscarPorEmail</span>(<span class="t">String</span> email) {
-        <span class="k">return</span> usuarios.stream()
-            .filter(u -> u.getEmail().equals(email))
-            .findFirst().orElse(<span class="k">null</span>);
+    public Produto(String nome, double preco) {
+        if (preco &lt;= 0) {
+            throw new IllegalArgumentException(&quot;Preço deve ser maior que zero&quot;);
+        }
+        this.nome = nome;
+        this.preco = preco;
     }
+    public double getPreco() { return preco; }
+}</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">Crie também um teste com assertThrows para preço zero.</div></div></div></section><section class="step"><div class="step-head"><span class="num">2</span><span class="title">Criar Pedido</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Use uma lista de produtos e implemente adicionarProduto e calcularTotal.</p><div class="code"><pre>private List&lt;Produto&gt; produtos = new ArrayList&lt;&gt;();
+
+public void adicionarProduto(Produto produto) {
+    produtos.add(produto);
 }
-        </pre></div>
-        <div class="step-actions">
-          <button class="hint-btn" onclick="toggleHint(2)">💡 Dica</button>
-          <button class="done-btn" onclick="markDone(2)">Marcar como concluído</button>
-        </div>
-        <div class="hint-box" id="hint-2">Esse Fake é uma implementação real e funcional — só que "persiste" em uma lista da memória, não em um banco de dados de verdade.</div>
-      </div>
-    </div>
-  </div>
 
-  <div class="step" id="step-3">
-    <div class="step-hdr" onclick="toggleStep(3)">
-      <div class="step-num">3</div>
-      <div class="step-title">Criar o serviço CadastroUsuario</div>
-      <div class="step-arrow">▶</div>
-    </div>
-    <div class="step-body">
-      <div class="step-inner">
-        <p>Crie a classe que depende de <code>RepositorioUsuario</code> (via construtor) e tem o método <code>cadastrar()</code>.</p>
-        <div class="code-wrap"><pre>
-<span class="k">public class</span> <span class="t">CadastroUsuario</span> {
-    <span class="k">private</span> <span class="t">RepositorioUsuario</span> repositorio;
-
-    <span class="k">public</span> <span class="fn">CadastroUsuario</span>(<span class="t">RepositorioUsuario</span> repositorio) {
-        <span class="k">this</span>.repositorio = repositorio;
+public double calcularTotal() {
+    double total = 0;
+    for (Produto produto : produtos) {
+        total += produto.getPreco();
     }
+    return total;
+}</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">Importe java.util.ArrayList e java.util.List.</div></div></div></section><section class="step"><div class="step-head"><span class="num">3</span><span class="title">Testar um produto no Pedido</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Crie a primeira evidência de colaboração.</p><div class="code"><pre>@Test
+void pedidoComUmProdutoDeveRetornarSeuPreco() {
+    Produto mouse = new Produto(&quot;Mouse&quot;, 100);
+    Pedido pedido = new Pedido();
 
-    <span class="k">public</span> <span class="k">void</span> <span class="fn">cadastrar</span>(<span class="t">Usuario</span> usuario) {
-        <span class="k">if</span> (repositorio.buscarPorEmail(usuario.getEmail()) != <span class="k">null</span>)
-            <span class="k">throw new</span> <span class="t">IllegalStateException</span>(<span class="s">"E-mail já cadastrado."</span>);
-        repositorio.salvar(usuario);
-    }
-}
-        </pre></div>
-        <div class="step-actions">
-          <button class="hint-btn" onclick="toggleHint(3)">💡 Dica</button>
-          <button class="done-btn" onclick="markDone(3)">Marcar como concluído</button>
-        </div>
-        <div class="hint-box" id="hint-3">Repare que CadastroUsuario depende só da INTERFACE — não sabe (e não precisa saber) se está usando o Fake ou uma implementação real de banco.</div>
-      </div>
-    </div>
-  </div>
+    pedido.adicionarProduto(mouse);
 
-  <div class="step" id="step-4">
-    <div class="step-hdr" onclick="toggleStep(4)">
-      <div class="step-num">4</div>
-      <div class="step-title">Testar o cadastro com sucesso</div>
-      <div class="step-arrow">▶</div>
-    </div>
-    <div class="step-body">
-      <div class="step-inner">
-        <p>Usando o Fake, teste que cadastrar um novo usuário funciona e ele passa a ser encontrado.</p>
-        <div class="code-wrap"><pre>
-<span class="fn">@Test</span>
-<span class="k">void</span> <span class="fn">cadastrarNovoUsuarioDeveSalvarNoRepositorio</span>() {
-    <span class="t">RepositorioUsuarioFake</span> fake = <span class="k">new</span> <span class="fn">RepositorioUsuarioFake</span>();
-    <span class="t">CadastroUsuario</span> cadastro = <span class="k">new</span> <span class="fn">CadastroUsuario</span>(fake);
+    assertEquals(100, pedido.calcularTotal(), 0.001);
+}</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">Pergunte: este cenário depende de quantas classes reais?</div></div></div></section><section class="step"><div class="step-head"><span class="num">4</span><span class="title">Testar vários produtos</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Adicione três produtos e calcule manualmente o esperado antes do assert.</p><div class="code"><pre>Produto p1 = new Produto(&quot;Mouse&quot;, 100);
+Produto p2 = new Produto(&quot;Teclado&quot;, 200);
+Produto p3 = new Produto(&quot;Webcam&quot;, 150);
 
-    cadastro.cadastrar(<span class="k">new</span> <span class="fn">Usuario</span>(<span class="s">"Ana"</span>, <span class="s">"ana@email.com"</span>));
+// Total esperado: 450</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">Não escreva 450 por tentativa: some os valores antes.</div></div></div></section><section class="step"><div class="step-head"><span class="num">5</span><span class="title">Criar e testar CalculadoraDesconto</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Teste primeiro a nova regra isoladamente.</p><div class="code"><pre>@Test
+void deveAplicarDezPorCento() {
+    CalculadoraDesconto calc = new CalculadoraDesconto();
 
-    assertNotNull(fake.buscarPorEmail(<span class="s">"ana@email.com"</span>));
-}
-        </pre></div>
-        <div class="step-actions">
-          <button class="hint-btn" onclick="toggleHint(4)">💡 Dica</button>
-          <button class="done-btn" onclick="markDone(4)">Marcar como concluído</button>
-        </div>
-        <div class="hint-box" id="hint-4">Aqui usamos o Fake tanto para "preparar" o cenário quanto para "verificar" o resultado — bem prático!</div>
-      </div>
-    </div>
-  </div>
+    assertEquals(90, calc.aplicar(100, 10), 0.001);
+}</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">Uma integração fica mais fácil de diagnosticar quando suas peças também têm testes menores.</div></div></div></section><section class="step"><div class="step-head"><span class="num">6</span><span class="title">Integrar desconto ao Pedido</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Faça Pedido usar o total calculado como entrada da calculadora.</p><div class="code"><pre>public double calcularTotalComDesconto(double percentual) {
+    double total = calcularTotal();
+    CalculadoraDesconto calculadora = new CalculadoraDesconto();
+    return calculadora.aplicar(total, percentual);
+}</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">Teste R$ 300 com 10%. O resultado esperado é R$ 270.</div></div></div></section><section class="step"><div class="step-head"><span class="num">7</span><span class="title">Provocar e investigar uma falha</span><span class="arrow">▶</span></div><div class="body"><div class="inside"><p>Troque += por -= em calcularTotal, execute tudo e registre a evidência.</p><div class="code"><pre>// defeito temporário
+total -= produto.getPreco();
 
-  <div class="step" id="step-5">
-    <div class="step-hdr" onclick="toggleStep(5)">
-      <div class="step-num">5</div>
-      <div class="step-title">Testar o cadastro duplicado</div>
-      <div class="step-arrow">▶</div>
-    </div>
-    <div class="step-body">
-      <div class="step-inner">
-        <p>Teste que cadastrar um e-mail já existente lança <code>IllegalStateException</code>.</p>
-        <div class="code-wrap"><pre>
-<span class="fn">@Test</span>
-<span class="k">void</span> <span class="fn">cadastrarEmailDuplicadoDeveLancarExcecao</span>() {
-    <span class="t">RepositorioUsuarioFake</span> fake = <span class="k">new</span> <span class="fn">RepositorioUsuarioFake</span>();
-    <span class="t">CadastroUsuario</span> cadastro = <span class="k">new</span> <span class="fn">CadastroUsuario</span>(fake);
-    cadastro.cadastrar(<span class="k">new</span> <span class="fn">Usuario</span>(<span class="s">"Ana"</span>, <span class="s">"ana@email.com"</span>));
-
-    assertThrows(<span class="t">IllegalStateException</span>.<span class="k">class</span>, () ->
-        cadastro.cadastrar(<span class="k">new</span> <span class="fn">Usuario</span>(<span class="s">"Outra Ana"</span>, <span class="s">"ana@email.com"</span>))
-    );
-}
-        </pre></div>
-        <div class="step-actions">
-          <button class="hint-btn" onclick="toggleHint(5)">💡 Dica</button>
-          <button class="done-btn" onclick="markDone(5)">Marcar como concluído</button>
-        </div>
-        <div class="hint-box" id="hint-5">Nenhum banco de dados real foi usado em nenhum dos dois testes — e ainda assim testamos a regra de negócio com confiança total.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="footer-nav">
-  <a href="a07_demo_ao_vivo.html">← Demo</a>
-  <a href="a07_desafio.html">Desafio →</a>
-</div>
-
-<script>
-  const totalSteps = 5;
-  let doneSteps = new Set();
-
-  function toggleStep(n){
-    const step = document.getElementById('step-' + n);
-    const isOpen = step.classList.contains('open');
-    document.querySelectorAll('.step').forEach(s => s.classList.remove('open'));
-    if(!isOpen) step.classList.add('open');
-  }
-
-  function toggleHint(n){
-    document.getElementById('hint-' + n).classList.toggle('show');
-  }
-
-  function markDone(n){
-    doneSteps.add(n);
-    document.getElementById('step-' + n).classList.add('done');
-    document.getElementById('progressFill').style.width = (doneSteps.size / totalSteps * 100) + '%';
-    if(n < totalSteps){
-      document.querySelectorAll('.step').forEach(s => s.classList.remove('open'));
-      const next = document.getElementById('step-' + (n+1));
-      next.classList.add('open');
-      next.scrollIntoView({behavior:'smooth', block:'center'});
-    }
-  }
-
-  toggleStep(1);
-</script>
-
-</body>
-</html>
+// Registre:
+// 1. teste que falhou;
+// 2. esperado;
+// 3. obtido;
+// 4. teste menor que ajudou no diagnóstico.</pre></div><div class="actions"><button class="hint-btn">💡 Dica</button><button class="done-btn">Marcar concluído</button></div><div class="hint">Depois da investigação, restaure += e deixe toda a suíte verde.</div></div></div></section></main><footer class="footer"><a href="a07_demo_ao_vivo.html">← Demonstração</a><a href="a07_desafio.html">Desafio autônomo →</a></footer><script>
+const steps=[...document.querySelectorAll('.step')];function update(){let done=steps.filter(x=>x.classList.contains('done')).length;document.getElementById('fill').style.width=`${done/steps.length*100}%`}steps.forEach(step=>{step.querySelector('.step-head').onclick=()=>step.classList.toggle('open');step.querySelector('.hint-btn').onclick=()=>step.querySelector('.hint').classList.toggle('show');step.querySelector('.done-btn').onclick=()=>{step.classList.toggle('done');update()}});update();
+</script></body></html>

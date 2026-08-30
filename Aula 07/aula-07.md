@@ -1,227 +1,260 @@
-# Aula 07 — Test Doubles: Dummy, Stub, Fake, Spy e Mock
+# Aula 07 — Testes de Integração
 
-**Módulo:** 3 — Dublês de Teste e Mockito
-**Carga horária:** 4 horas
-**Professor(a):** [Nome/@handle da turma]
-
----
-
-## 🎯 Objetivos da aula
-
-- Entender por que precisamos de "dublês" ao testar código que depende de outras partes do sistema;
-- Diferenciar dummy, stub, fake, spy e mock;
-- Identificar quando cada tipo de dublê é apropriado;
-- Criar manualmente (sem framework ainda) um stub simples para destravar um teste.
+**Unidade curricular:** Teste de Sistemas  
+**Carga horária:** 4 horas  
+**Tema central:** diferenciar testes unitários e de integração, testar colaboração entre componentes e diagnosticar falhas de integração
 
 ---
 
-## 🖼️ Retomando a analogia — os atores contratados
+## 1. Objetivos de aprendizagem
 
-Nem toda testemunha em um julgamento está realmente disponível. Às vezes o tribunal contrata um **ator** para representar uma testemunha ausente — alguém que segue um roteiro específico. Isso é exatamente o que um **test double** faz: substitui uma dependência real (um banco de dados, uma API externa, um serviço de e-mail) por um "ator" controlado, para que possamos testar nosso código **isoladamente**, sem depender de sistemas externos lentos, instáveis ou fora do nosso controle.
+Ao final da aula, o estudante deverá ser capaz de:
+
+- diferenciar teste unitário de teste de integração;
+- identificar componentes que colaboram em um cenário;
+- estruturar testes com Arrange, Act e Assert;
+- escrever testes de integração com JUnit 5;
+- interpretar falhas que envolvem mais de uma classe;
+- usar testes menores para apoiar o diagnóstico;
+- reconhecer o problema das dependências externas.
+
+## 2. Organização sugerida das 4 horas
+
+| Etapa | Tempo | Estratégia |
+|---|---:|---|
+| Retomada da Aula 6 | 15 min | Organização da suíte e leitura das evidências |
+| Exposição dialogada | 55 min | Unitário × integração e pirâmide de testes |
+| Demonstração ao vivo | 35 min | `Produto → Pedido → CalculadoraDesconto` |
+| Intervalo | 10 min | — |
+| Prática guiada | 80 min | Implementação em sete etapas |
+| Desafio autônomo | 35 min | `Livro → Carrinho → CalculadoraDesconto` |
+| Socialização e feedback | 10 min | Rubrica e ponte para mocks |
 
 ---
 
-## 📚 Conteúdo teórico
+## 3. Questão-problema
 
-### 1. O problema: dependências externas
+Se uma classe funciona corretamente sozinha, podemos afirmar que o sistema inteiro funciona?
 
-Imagine uma classe `NotificadorPedido` que, ao confirmar um pedido, envia um e-mail de verdade através de um serviço externo:
+Não. Aplicações reais são compostas por partes que colaboram.
+
+**Analogia:** um músico pode tocar perfeitamente sozinho. Isso não garante que a banda inteira esteja sincronizada.
+
+- teste unitário: testa o músico;
+- teste de integração: testa a banda.
+
+## 4. Unitário × integração
+
+| Critério | Unitário | Integração |
+|---|---|---|
+| Foco | Uma pequena unidade | Colaboração entre componentes |
+| Diagnóstico | Mais localizado | Pode exigir investigação |
+| Exemplo | `Produto` valida preço | `Pedido` soma `Produto` |
+
+## 5. Domínio da demonstração
+
+```text
+Produto
+   ↓
+Pedido
+   ↓
+CalculadoraDesconto
+```
+
+### Produto.java
 
 ```java
-public class NotificadorPedido {
-    private ServicoEmail servicoEmail; // depende de algo externo!
+public class Produto {
+    private String nome;
+    private double preco;
 
-    public void notificar(Pedido pedido) {
-        servicoEmail.enviar(pedido.getEmailCliente(), "Pedido confirmado!");
+    public Produto(String nome, double preco) {
+        if (preco <= 0) {
+            throw new IllegalArgumentException("Preço deve ser maior que zero");
+        }
+        this.nome = nome;
+        this.preco = preco;
     }
+
+    public String getNome() { return nome; }
+    public double getPreco() { return preco; }
 }
 ```
 
-Se testarmos essa classe "de verdade", cada execução de teste **enviaria um e-mail real**. Isso é lento, não-determinístico (depende da internet) e indesejável. Precisamos de um **dublê** que finja ser o `ServicoEmail`.
-
-### 2. Os cinco tipos de test double
-
-| Tipo | O que faz |
-|---|---|
-| **Dummy** | Um objeto "de preenchimento", passado apenas para satisfazer a assinatura de um método, mas nunca realmente usado |
-| **Stub** | Retorna respostas pré-definidas e fixas para as chamadas feitas durante o teste, sem lógica real |
-| **Fake** | Tem uma implementação funcional, mas simplificada (ex.: um banco de dados em memória no lugar de um banco real) |
-| **Spy** | Um objeto real (ou parcialmente real) que "grava" as chamadas feitas a ele, permitindo verificar depois quais métodos foram chamados |
-| **Mock** | Um objeto "programado" com expectativas: você define o comportamento esperado e verifica se as interações aconteceram como previsto |
-
-### 3. Exemplo de Dummy
-
-```java
-// O parâmetro "logger" é exigido pela assinatura do método, mas o teste
-// não se importa com o que ele faz — é apenas um "preenchimento"
-public class ServicoLogDummy implements ServicoLog {
-    @Override
-    public void registrar(String mensagem) {
-        // Não faz nada — dummy não tem comportamento real
-    }
-}
-```
-
-### 4. Exemplo de Stub (criado manualmente)
-
-```java
-// Um Stub simples: sempre retorna o mesmo resultado fixo, sem se conectar a nada real
-public class ServicoEmailStub implements ServicoEmail {
-    @Override
-    public boolean enviar(String destinatario, String mensagem) {
-        return true; // sempre "finge" que o envio deu certo
-    }
-}
-```
+### ProdutoTest.java
 
 ```java
 @Test
-void notificarPedidoDeveChamarEnvioDeEmail() {
-    // Arrange: usamos o Stub no lugar do serviço real
-    ServicoEmailStub stub = new ServicoEmailStub();
-    NotificadorPedido notificador = new NotificadorPedido(stub);
-    Pedido pedido = new Pedido("cliente@email.com");
-
-    // Act
-    boolean resultado = notificador.notificar(pedido);
-
-    // Assert: como o Stub sempre retorna true, sabemos o que esperar
-    assertTrue(resultado);
+void deveCriarProdutoComPrecoCorreto() {
+    Produto produto = new Produto("Teclado", 200);
+    assertEquals(200, produto.getPreco(), 0.001);
 }
 ```
 
-### 5. Exemplo de Fake
+Esse teste é unitário porque observa uma pequena unidade.
+
+## 6. Pedido.java
 
 ```java
-// Fake: implementação funcional, só que simplificada (em memória, sem banco real)
-public class RepositorioClienteFake implements RepositorioCliente {
-    private List<Cliente> clientes = new ArrayList<>();
+public class Pedido {
+    private List<Produto> produtos = new ArrayList<>();
 
-    @Override
-    public void salvar(Cliente cliente) {
-        clientes.add(cliente); // "persiste" só na memória, não em um banco real
+    public void adicionarProduto(Produto produto) {
+        produtos.add(produto);
     }
 
-    @Override
-    public Cliente buscarPorEmail(String email) {
-        return clientes.stream()
-            .filter(c -> c.getEmail().equals(email))
-            .findFirst()
-            .orElse(null);
+    public double calcularTotal() {
+        double total = 0;
+
+        for (Produto produto : produtos) {
+            total += produto.getPreco();
+        }
+
+        return total;
     }
 }
 ```
 
-### 6. Spy e Mock — uma prévia
-
-Spy e Mock geralmente são criados com o auxílio de um **framework** (o Mockito, que veremos nas próximas duas aulas), porque programá-los manualmente é trabalhoso. Por enquanto, entenda a diferença conceitual:
-
-- **Spy**: "Eu quero saber se e como esse objeto foi usado" (grava as interações);
-- **Mock**: "Eu quero definir o comportamento esperado E verificar as interações previstas" (mistura stub + verificação).
-
----
-
-<a id="atividade"></a>
-## 💻 Atividade Prática
-
-**Duração sugerida:** 70 minutos
-
-### Passo a passo
-
-1. Crie a interface `ServicoPagamento`, com o método `boolean processar(double valor)`;
-2. Crie a classe `Checkout`, que recebe um `ServicoPagamento` no construtor e possui o método `boolean finalizarCompra(double valor)`, que delega ao `ServicoPagamento`;
-3. Crie um **Stub** manual `ServicoPagamentoStubAprovado`, que sempre retorna `true`;
-4. Crie um **Stub** manual `ServicoPagamentoStubRecusado`, que sempre retorna `false`;
-5. Escreva `CheckoutTest` com dois testes: um usando o stub "aprovado" (esperando `true`) e outro usando o stub "recusado" (esperando `false`).
-
-[Ver Gabarito »](#gabarito)
-
----
-
-<a id="gabarito"></a>
-## ✅ Gabarito
+## 7. Primeiro teste de integração
 
 ```java
-package br.edu.testesistemas.pagamento;
+@Test
+void deveCalcularTotalDosProdutos() {
+    Produto teclado = new Produto("Teclado", 200);
+    Produto mouse = new Produto("Mouse", 100);
+    Pedido pedido = new Pedido();
 
-public interface ServicoPagamento {
-    boolean processar(double valor);
+    pedido.adicionarProduto(teclado);
+    pedido.adicionarProduto(mouse);
+
+    assertEquals(300, pedido.calcularTotal(), 0.001);
 }
 ```
+
+Agora o resultado depende da colaboração entre `Produto` e `Pedido`.
+
+## 8. Arrange, Act e Assert
+
+- **Arrange:** preparar objetos e dados.
+- **Act:** executar o comportamento.
+- **Assert:** verificar a expectativa.
+
+## 9. CalculadoraDesconto
 
 ```java
-package br.edu.testesistemas.pagamento;
-
-public class Checkout {
-    private ServicoPagamento servicoPagamento;
-
-    public Checkout(ServicoPagamento servicoPagamento) {
-        this.servicoPagamento = servicoPagamento;
-    }
-
-    public boolean finalizarCompra(double valor) {
-        return servicoPagamento.processar(valor);
+public class CalculadoraDesconto {
+    public double aplicar(double valor, double percentual) {
+        return valor - (valor * percentual / 100);
     }
 }
 ```
+
+Em `Pedido`:
 
 ```java
-package br.edu.testesistemas.pagamento;
+public double calcularTotalComDesconto(double percentual) {
+    double total = calcularTotal();
+    CalculadoraDesconto calculadora = new CalculadoraDesconto();
 
-// Stub que sempre simula um pagamento aprovado
-public class ServicoPagamentoStubAprovado implements ServicoPagamento {
-    @Override
-    public boolean processar(double valor) {
-        return true;
-    }
-}
-
-// Stub que sempre simula um pagamento recusado
-public class ServicoPagamentoStubRecusado implements ServicoPagamento {
-    @Override
-    public boolean processar(double valor) {
-        return false;
-    }
+    return calculadora.aplicar(total, percentual);
 }
 ```
+
+## 10. Fluxo integrado
 
 ```java
-package br.edu.testesistemas.pagamento;
+@Test
+void deveCalcularPedidoComDesconto() {
+    Produto teclado = new Produto("Teclado", 200);
+    Produto mouse = new Produto("Mouse", 100);
+    Pedido pedido = new Pedido();
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+    pedido.adicionarProduto(teclado);
+    pedido.adicionarProduto(mouse);
 
-class CheckoutTest {
+    double resultado = pedido.calcularTotalComDesconto(10);
 
-    @Test
-    void finalizarCompraComPagamentoAprovadoDeveRetornarTrue() {
-        // Arrange: usamos o dublê que sempre aprova
-        Checkout checkout = new Checkout(new ServicoPagamentoStubAprovado());
-
-        // Act
-        boolean resultado = checkout.finalizarCompra(150.0);
-
-        // Assert
-        assertTrue(resultado);
-    }
-
-    @Test
-    void finalizarCompraComPagamentoRecusadoDeveRetornarFalse() {
-        // Arrange: usamos o dublê que sempre recusa
-        Checkout checkout = new Checkout(new ServicoPagamentoStubRecusado());
-
-        // Act
-        boolean resultado = checkout.finalizarCompra(150.0);
-
-        // Assert
-        assertFalse(resultado);
-    }
+    assertEquals(270, resultado, 0.001);
 }
 ```
 
-> 💡 Note como testamos `Checkout` **sem depender de um serviço de pagamento real** — nenhuma cobrança de verdade acontece durante o teste, e conseguimos testar os dois cenários (aprovado/recusado) com controle total.
+## 11. Investigação de falha
 
----
+Troque temporariamente:
 
-**Próxima aula:** vamos conhecer o **Mockito**, o framework que automatiza a criação de stubs e mocks, eliminando a necessidade de escrever classes dublês manualmente como fizemos hoje.
+```java
+total += produto.getPreco();
+```
+
+por:
+
+```java
+total -= produto.getPreco();
+```
+
+Execute os testes e registre:
+
+1. qual teste falhou;
+2. resultado esperado;
+3. resultado obtido;
+4. qual teste menor ajuda a localizar a causa.
+
+## 12. Pirâmide de testes
+
+```text
+             /\
+            /E2E\
+           /----\
+          /Integração\
+         /----------\
+        / Unitários  \
+       /______________\
+```
+
+Os tipos se complementam. Testes de integração não substituem testes unitários.
+
+## 13. Prática guiada
+
+1. Criar `Produto` com validação.
+2. Criar `Pedido`.
+3. Testar um produto no pedido.
+4. Testar vários produtos.
+5. Criar e testar `CalculadoraDesconto`.
+6. Integrar desconto ao pedido.
+7. Provocar e diagnosticar uma falha.
+
+## 14. Desafio autônomo
+
+Construa:
+
+```text
+Livro
+  ↓
+Carrinho
+  ↓
+CalculadoraDesconto
+```
+
+Regras:
+
+- adicionar livros;
+- calcular total;
+- aplicar desconto;
+- rejeitar desconto negativo;
+- rejeitar desconto superior a 50%;
+- criar testes unitários e de integração;
+- verificar R$ 150 com 10% de desconto = R$ 135.
+
+## 15. Ponte para a Aula 08
+
+```text
+Pedido
+   ↓
+ServicoPagamento
+   ↓
+API externa
+```
+
+Como testar `Pedido` sem realizar um pagamento verdadeiro?
+
+**Próxima aula:** dependências, dublês de teste, mocks e Mockito.

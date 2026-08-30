@@ -1,334 +1,90 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aula 07 — Exposição | Teste de Sistemas</title>
-<style>
-  :root{
-    --bg:#0f172a;
-    --bg2:#141f38;
-    --panel:#1b2b4d;
-    --ink:#e6ebf5;
-    --muted:#93a3c2;
-    --accent:#4ade80;
-    --accent2:#f97373;
-    --amber:#fbbf24;
-    --rule:#2b3a5e;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:var(--bg);
-    color:var(--ink);
-    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    height:100vh;
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-  }
-  .hdr{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:14px 28px;
-    border-bottom:1px solid var(--rule);
-    font-family:'JetBrains Mono',monospace;
-    font-size:12px;
-    color:var(--muted);
-    letter-spacing:.04em;
-  }
-  .hdr b{color:var(--accent);}
-  .slide-viewport{flex:1; position:relative; overflow:hidden;}
-  .slide-wrap{
-    position:absolute; inset:0;
-    display:none;
-    padding:48px 64px;
-    flex-direction:column;
-    justify-content:center;
-    animation:fadeIn .35s ease;
-  }
-  .slide-wrap.active{display:flex;}
-  @keyframes fadeIn{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aula 07 — Testes de Integração</title><style>
+:root{--bg:#08111f;--panel:#12233e;--panel2:#172c4c;--ink:#edf4ff;--muted:#a9bad5;--accent:#4ade80;--blue:#60a5fa;--amber:#fbbf24;--red:#fb7185;--rule:#294261;--code:#07101d}*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif}body{display:flex;flex-direction:column;overflow:hidden}code,pre,.mono{font-family:"JetBrains Mono",Consolas,monospace}.hdr{display:flex;justify-content:space-between;gap:15px;padding:11px 22px;border-bottom:1px solid var(--rule);font-size:12px;color:var(--muted)}.hdr b,.track a.active{color:var(--accent)}.track{display:flex;gap:8px}.track a{color:var(--muted);text-decoration:none}.progress{height:3px;background:var(--rule)}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--blue));transition:.25s}.viewport{position:relative;flex:1;min-height:0}.slide{position:absolute;inset:0;display:none;overflow:auto;padding:30px 48px 38px}.slide.active{display:block}.content{max-width:1180px;margin:auto}.eyebrow{font:800 11px "JetBrains Mono",monospace;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:9px}h1{font-size:clamp(34px,5vw,58px);line-height:1.04;margin:0 0 16px;max-width:1000px}h2{font-size:clamp(26px,3.4vw,40px);margin:0 0 14px}h3{margin:0 0 8px}.lead{font-size:clamp(16px,2vw,20px);line-height:1.6;color:var(--muted);max-width:940px}.hl{color:var(--accent);font-weight:800}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:13px;margin-top:18px}.card,.note{background:linear-gradient(145deg,var(--panel),var(--panel2));border:1px solid var(--rule);border-radius:11px;padding:16px}.card b{color:var(--accent)}.card p,.note{color:var(--muted);font-size:14px;line-height:1.55}.note{margin-top:17px;border-left:4px solid var(--blue)}.warning{border-left-color:var(--amber)}.success{border-left-color:var(--accent)}.code-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(250px,.75fr);gap:16px;margin-top:15px}.codebox{background:var(--code);border:1px solid var(--rule);border-radius:11px;overflow:hidden}.codehead{display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--rule);color:var(--muted);font:700 11px "JetBrains Mono",monospace}.copy{background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-radius:5px;padding:4px 8px;cursor:pointer}pre{margin:0;padding:15px 17px;overflow:auto;color:#dbeafe;font-size:12.3px;line-height:1.58}.k{color:#c792ea}.t{color:#ffcb6b}.s{color:#c3e88d}.c{color:#6f86a8;font-style:italic}.a{color:#89ddff}.n{color:#f78c6c}.fn{color:#82aaff}.steps{display:grid;gap:9px}.step{background:var(--panel);border:1px solid var(--rule);border-radius:9px;padding:12px}.step b{color:var(--accent);font-size:13px}.step p{margin:4px 0 0;color:var(--muted);font-size:13px;line-height:1.5}table{width:100%;border-collapse:collapse;background:var(--panel);border-radius:10px;overflow:hidden;margin-top:16px;font-size:14px}th,td{padding:11px 13px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}th{background:var(--panel2);color:var(--accent);font-size:12px}td{color:var(--muted)}.quiz{display:grid;gap:12px;max-width:900px}.question{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:14px}.question p{margin:0 0 9px}.option{display:block;width:100%;text-align:left;background:var(--code);color:var(--ink);border:1px solid var(--rule);border-radius:7px;padding:9px 11px;margin-top:7px;cursor:pointer}.option.correct{border-color:var(--accent);background:rgba(74,222,128,.12)}.option.wrong{border-color:var(--red);background:rgba(251,113,133,.12)}.cta{display:inline-flex;margin-top:20px;background:var(--accent);color:var(--bg);font-weight:850;text-decoration:none;padding:12px 17px;border-radius:8px}.footer{display:flex;align-items:center;gap:12px;padding:10px 20px;border-top:1px solid var(--rule)}.counter{font:700 11px "JetBrains Mono",monospace;color:var(--muted)}.dots{display:flex;gap:5px;flex:1;justify-content:center}.dot{width:7px;height:7px;padding:0;border:0;border-radius:50%;background:var(--rule);cursor:pointer}.dot.active{width:19px;border-radius:6px;background:var(--accent)}.navs{display:flex;gap:7px}.nav,.demo{border:1px solid var(--rule);background:var(--panel);color:var(--ink);padding:8px 11px;border-radius:7px;cursor:pointer;text-decoration:none;font-size:12px}.demo{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:800}.nav:disabled{opacity:.35}@media(max-width:800px){.track{display:none}.slide{padding:23px 17px 30px}.code-grid{grid-template-columns:1fr}.dots{display:none}.hdr span:last-child{display:none}pre{font-size:11px}.footer{padding:9px}.nav,.demo{padding:8px}}
+</style></head><body>
+<header class="hdr"><span>UC <b>Teste de Sistemas</b> · Aula 07</span><nav class="track"><a class="active" href="a07_exposicao.html">Exposição</a><a href="a07_demo_ao_vivo.html">Demo</a><a href="a07_pratica_guiada.html">Prática</a><a href="a07_desafio.html">Desafio</a><a href="a07_feedback.html">Feedback</a></nav><span>JUnit 5 · integração · diagnóstico</span></header><div class="progress"><span id="progress"></span></div><main class="viewport"><section class="slide active"><div class="content"><div class="eyebrow">Aula 07 · 4 horas</div><h1>Quando as peças funcionam juntas</h1><p class="lead">Um teste unitário responde se uma peça funciona. Nesta aula, vamos descobrir se <span class="hl">duas ou mais peças colaboram corretamente</span>.</p>
+<div class="grid"><article class="card"><b>Unitário</b><p>Observa uma unidade pequena.</p></article><article class="card"><b>Integração</b><p>Observa a comunicação entre componentes.</p></article><article class="card"><b>Diagnóstico</b><p>Usa testes menores para localizar a causa de uma falha.</p></article></div></div></section><section class="slide"><div class="content"><div class="eyebrow">1 · Objetivos</div><h1>O que você deverá conseguir fazer</h1><div class="grid"><article class="card"><b>Diferenciar</b><p>Reconhecer testes unitários e de integração.</p></article><article class="card"><b>Integrar</b><p>Testar Produto, Pedido e CalculadoraDesconto trabalhando juntos.</p></article><article class="card"><b>Estruturar</b><p>Aplicar Arrange, Act e Assert.</p></article><article class="card"><b>Investigar</b><p>Interpretar falhas que atravessam mais de uma classe.</p></article></div></div></section><section class="slide"><div class="content"><div class="eyebrow">2 · Questão-problema</div><h1>Uma classe verde garante um sistema verde?</h1><div class="code-grid"><div class="codebox"><div class="codehead"><span>CalculadoraDescontoTest.java</span><button class="copy">Copiar</button></div><pre>@Test
+void deveAplicarDesconto() {
+    CalculadoraDesconto calc = new CalculadoraDesconto();
+    assertEquals(90, calc.aplicar(100, 10), 0.001);
+}</pre></div><aside class="steps"><div class="step"><b>O que sabemos?</b><p>A calculadora produziu o resultado esperado.</p></div><div class="step"><b>O que não sabemos?</b><p>Se Pedido fornece o total correto e se os objetos colaboram.</p></div></aside></div><div class="note warning">Um componente correto isoladamente não prova que a integração está correta.</div></div></section><section class="slide"><div class="content"><div class="eyebrow">3 · Conceito</div><h1>Unitário × Integração</h1><table><tr><th>Critério</th><th>Unitário</th><th>Integração</th></tr><tr><td>Foco</td><td>Uma pequena unidade</td><td>Colaboração entre componentes</td></tr><tr><td>Diagnóstico</td><td>Mais localizado</td><td>Pode exigir investigação</td></tr><tr><td>Exemplo</td><td>Produto valida preço</td><td>Pedido soma Produtos</td></tr></table><div class="note"><b>Analogia da banda:</b> testar o músico é unitário; testar a banda tocando junta é integração.</div></div></section><section class="slide"><div class="content"><div class="eyebrow">4 · Domínio</div><h1>Produto será nossa primeira peça</h1><div class="code-grid"><div class="codebox"><div class="codehead"><span>Produto.java</span><button class="copy">Copiar</button></div><pre>public class Produto {
+    private String nome;
+    private double preco;
 
-  .eyebrow{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent); letter-spacing:.1em; text-transform:uppercase; margin-bottom:10px;}
-  h1{font-size:38px; margin:0 0 12px; font-weight:700;}
-  h2{font-size:28px; margin:0 0 20px; font-weight:700;}
-  p.lead{font-size:17px; color:var(--muted); max-width:680px; line-height:1.6;}
-  .hl{color:var(--accent); font-weight:700;}
-
-  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-top:20px;}
-  .card{background:var(--panel); border:1px solid var(--rule); border-radius:10px; padding:18px 20px;}
-  .card .n{font-family:'JetBrains Mono',monospace; color:var(--accent); font-size:12px; margin-bottom:6px;}
-  .card h3{margin:0 0 8px; font-size:16px;}
-  .card p{margin:0; font-size:13.5px; color:var(--muted); line-height:1.5;}
-
-  .code-wrap{
-    background:#0b1424; border:1px solid var(--rule); border-radius:10px;
-    padding:16px 20px; font-family:'JetBrains Mono',monospace; font-size:13px;
-    line-height:1.6; overflow-x:auto; margin-top:16px; max-width:720px;
-  }
-  .code-wrap .k{color:#c792ea;} .code-wrap .a{color:#82aaff;} .code-wrap .s{color:#c3e88d;}
-  .code-wrap .t{color:#ffcb6b;} .code-wrap .c{color:#546e8a;} .code-wrap .fn{color:#82aaff;}
-
-  .compare{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:20px; max-width:820px;}
-  .compare .col{background:var(--panel); border:1px solid var(--rule); border-radius:10px; padding:16px 18px;}
-  .compare .col.bad{border-color:#5c2a2a;}
-  .compare .col.good{border-color:#2a5c3a;}
-  .compare h4{margin:0 0 10px; font-size:13px; font-family:'JetBrains Mono',monospace; letter-spacing:.04em;}
-  .compare .bad h4{color:var(--accent2);}
-  .compare .good h4{color:var(--accent);}
-  .compare ul{margin:0; padding-left:18px; font-size:13.5px; color:var(--muted);}
-  .compare li{margin-bottom:6px;}
-
-  .tag-grid{display:flex; flex-wrap:wrap; gap:12px; margin-top:22px;}
-  .tag{
-    background:var(--panel); border:1px solid var(--rule); border-radius:20px;
-    padding:9px 18px; font-size:14px; cursor:pointer; transition:.2s;
-  }
-  .tag:hover{border-color:var(--accent); color:var(--accent);}
-  .tag-desc{
-    margin-top:16px; background:#0b1424; border-left:3px solid var(--accent);
-    padding:14px 18px; font-size:14px; color:var(--ink); border-radius:6px; display:none; max-width:680px;
-  }
-  .tag-desc.show{display:block;}
-
-  .quiz-block{margin-top:20px; max-width:680px;}
-  .quiz-q{background:var(--panel); border:1px solid var(--rule); border-radius:10px; padding:16px 20px; margin-bottom:14px;}
-  .quiz-q p{margin:0 0 12px; font-weight:600; font-size:15px;}
-  .quiz-opts{display:flex; flex-direction:column; gap:8px;}
-  .quiz-opt{
-    background:#0b1424; border:1px solid var(--rule); border-radius:6px; padding:9px 14px;
-    font-size:13.5px; cursor:pointer; transition:.15s;
-  }
-  .quiz-opt:hover{border-color:var(--muted);}
-  .quiz-opt.correct{border-color:var(--accent); background:rgba(74,222,128,.12); color:var(--accent);}
-  .quiz-opt.wrong{border-color:var(--accent2); background:rgba(249,115,115,.12); color:var(--accent2);}
-
-  .reflect-list{margin-top:18px; max-width:640px;}
-  .reflect-list li{margin-bottom:10px; color:var(--muted); font-size:14.5px;}
-
-  .footer-nav{
-    display:flex; justify-content:space-between; align-items:center;
-    padding:14px 28px; border-top:1px solid var(--rule);
-  }
-  .dots{display:flex; gap:8px;}
-  .dot{width:8px; height:8px; border-radius:50%; background:var(--rule); cursor:pointer; transition:.2s;}
-  .dot.active{background:var(--accent); width:22px; border-radius:4px;}
-  .nav-btns{display:flex; gap:10px; align-items:center;}
-  button.nav{
-    background:var(--panel); border:1px solid var(--rule); color:var(--ink);
-    padding:8px 16px; border-radius:6px; font-size:13px; cursor:pointer; font-family:inherit;
-  }
-  button.nav:hover{border-color:var(--accent);}
-  a.demo-link{
-    font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent);
-    text-decoration:none; border:1px solid var(--accent); padding:8px 14px; border-radius:6px;
-  }
-  .badge-au{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);}
-  .badge-au a{color:var(--accent); text-decoration:none;}
-</style>
-</head>
-<body>
-
-<div class="hdr">
-  <span>UC <b>Teste de Sistemas</b> · Aula 07 — Test Doubles</span>
-  <span>4h · Módulo 1</span>
-</div>
-
-<div class="slide-viewport">
-
-  <!-- Slide 1 -->
-  <div class="slide-wrap active">
-    <div class="eyebrow">Os atores contratados</div>
-    <h1>Quando a Testemunha Real Não Pode Vir</h1>
-    <p class="lead">Às vezes o tribunal contrata um <span class="hl">ator</span> para representar uma testemunha ausente. Um <code>test double</code> faz exatamente isso: substitui uma dependência real (banco, API, e-mail) por um "ator" controlado, para testarmos nosso código isoladamente.</p>
-  </div>
-
-  <!-- Slide 2 -->
-  <div class="slide-wrap">
-    <div class="eyebrow">O problema</div>
-    <h2>Dependências externas em testes</h2>
-    <div class="code-wrap"><pre>
-<span class="k">public class</span> <span class="t">NotificadorPedido</span> {
-    <span class="k">private</span> <span class="t">ServicoEmail</span> servicoEmail; <span class="c">// depende de algo externo!</span>
-
-    <span class="k">public</span> <span class="k">void</span> <span class="fn">notificar</span>(<span class="t">Pedido</span> pedido) {
-        servicoEmail.enviar(...); <span class="c">// enviaria um e-mail REAL no teste!</span>
+    public Produto(String nome, double preco) {
+        if (preco &lt;= 0) {
+            throw new IllegalArgumentException(
+                "Preço deve ser maior que zero"
+            );
+        }
+        this.nome = nome;
+        this.preco = preco;
     }
-}
-    </pre></div>
-  </div>
 
-  <!-- Slide 3: tag-grid -->
-  <div class="slide-wrap">
-    <div class="eyebrow">O elenco</div>
-    <h2>Os cinco tipos de test double</h2>
-    <p class="lead">Clique em cada tipo para entender sua função.</p>
-    <div class="tag-grid">
-      <div class="tag" onclick="showTag('dummy')">Dummy</div>
-      <div class="tag" onclick="showTag('stub')">Stub</div>
-      <div class="tag" onclick="showTag('fake')">Fake</div>
-      <div class="tag" onclick="showTag('spy')">Spy</div>
-      <div class="tag" onclick="showTag('mock')">Mock</div>
-    </div>
-    <div class="tag-desc" id="tag-desc"></div>
-  </div>
+    public String getNome() { return nome; }
+    public double getPreco() { return preco; }
+}</pre></div><aside class="steps"><div class="step"><b>Regra</b><p>Preço precisa ser positivo.</p></div><div class="step"><b>Pergunta</b><p>Que comportamentos merecem testes?</p></div></aside></div></div></section><section class="slide"><div class="content"><div class="eyebrow">5 · Unitário</div><h1>Testar Produto isoladamente</h1><div class="codebox"><div class="codehead"><span>ProdutoTest.java</span><button class="copy">Copiar</button></div><pre>@Test
+void deveCriarProdutoComPrecoCorreto() {
+    Produto produto = new Produto("Teclado", 200);
+    assertEquals(200, produto.getPreco(), 0.001);
+}</pre></div><div class="note success">O comportamento observado está concentrado em Produto. Portanto, este é um teste unitário.</div></div></section><section class="slide"><div class="content"><div class="eyebrow">6 · Colaboração</div><h1>Pedido passa a depender de Produto</h1><div class="code-grid"><div class="codebox"><div class="codehead"><span>Pedido.java</span><button class="copy">Copiar</button></div><pre>public class Pedido {
+    private List&lt;Produto&gt; produtos = new ArrayList&lt;&gt;();
 
-  <!-- Slide 4 -->
-  <div class="slide-wrap">
-    <div class="eyebrow">Exemplo</div>
-    <h2>Um Stub manual</h2>
-    <div class="code-wrap"><pre>
-<span class="k">public class</span> <span class="t">ServicoEmailStub</span> <span class="k">implements</span> <span class="t">ServicoEmail</span> {
-    <span class="fn">@Override</span>
-    <span class="k">public</span> <span class="k">boolean</span> <span class="fn">enviar</span>(<span class="t">String</span> dest, <span class="t">String</span> msg) {
-        <span class="k">return</span> <span class="k">true</span>; <span class="c">// sempre "finge" que deu certo</span>
+    public void adicionarProduto(Produto produto) {
+        produtos.add(produto);
     }
-}
-    </pre></div>
-  </div>
 
-  <!-- Slide 5 -->
-  <div class="slide-wrap">
-    <div class="eyebrow">Exemplo</div>
-    <h2>Um Fake manual</h2>
-    <div class="code-wrap"><pre>
-<span class="k">public class</span> <span class="t">RepositorioClienteFake</span> <span class="k">implements</span> <span class="t">RepositorioCliente</span> {
-    <span class="k">private</span> <span class="t">List</span>&lt;<span class="t">Cliente</span>&gt; clientes = <span class="k">new</span> <span class="fn">ArrayList</span>&lt;&gt;();
+    public double calcularTotal() {
+        double total = 0;
+        for (Produto produto : produtos) {
+            total += produto.getPreco();
+        }
+        return total;
+    }
+}</pre></div><aside class="steps"><div class="step"><b>Integração</b><p>Pedido usa dados fornecidos por objetos Produto.</p></div></aside></div></div></section><section class="slide"><div class="content"><div class="eyebrow">7 · Primeiro teste</div><h1>Produto + Pedido</h1><div class="codebox"><div class="codehead"><span>PedidoIntegracaoTest.java</span><button class="copy">Copiar</button></div><pre>@Test
+void deveCalcularTotalDosProdutos() {
+    Produto teclado = new Produto("Teclado", 200);
+    Produto mouse = new Produto("Mouse", 100);
+    Pedido pedido = new Pedido();
 
-    <span class="fn">@Override</span>
-    <span class="k">public</span> <span class="k">void</span> <span class="fn">salvar</span>(<span class="t">Cliente</span> c) { clientes.add(c); }
-}
-    </pre></div>
-    <p class="lead" style="margin-top:14px; font-size:14.5px;">Implementação funcional de verdade, só que simplificada — "persiste" em memória, não em um banco real.</p>
-  </div>
+    pedido.adicionarProduto(teclado);
+    pedido.adicionarProduto(mouse);
 
-  <!-- Slide 6: compare -->
-  <div class="slide-wrap">
-    <div class="eyebrow">Diferença chave</div>
-    <h2>Stub vs. Mock</h2>
-    <div class="compare">
-      <div class="col bad">
-        <h4>STUB</h4>
-        <ul>
-          <li>Retorna respostas fixas e pré-definidas</li>
-          <li>Não verifica COMO foi chamado</li>
-          <li>"Eu só preciso de uma resposta controlada"</li>
-        </ul>
-      </div>
-      <div class="col good">
-        <h4>MOCK</h4>
-        <ul>
-          <li>Define comportamento esperado E verifica interações</li>
-          <li>Confirma se um método foi chamado, quantas vezes, com quais argumentos</li>
-          <li>"Eu quero PROVAR que a interação aconteceu"</li>
-        </ul>
-      </div>
-    </div>
-  </div>
+    assertEquals(300, pedido.calcularTotal(), 0.001);
+}</pre></div><div class="note success">Agora o resultado depende da colaboração entre objetos reais de Produto e Pedido.</div></div></section><section class="slide"><div class="content"><div class="eyebrow">8 · Organização</div><h1>Arrange, Act e Assert</h1><div class="grid"><article class="card"><b>Arrange</b><p>Preparar objetos e dados.</p></article><article class="card"><b>Act</b><p>Executar o comportamento.</p></article><article class="card"><b>Assert</b><p>Comparar resultado e expectativa.</p></article></div><div class="note">Como uma receita: separar ingredientes, preparar o prato e verificar o resultado.</div></div></section><section class="slide"><div class="content"><div class="eyebrow">9 · Terceira peça</div><h1>CalculadoraDesconto</h1><div class="codebox"><div class="codehead"><span>CalculadoraDesconto.java</span><button class="copy">Copiar</button></div><pre>public class CalculadoraDesconto {
+    public double aplicar(double valor, double percentual) {
+        return valor - (valor * percentual / 100);
+    }
+}</pre></div><div class="note">Primeiro teste esta classe isoladamente. Depois integre-a ao Pedido.</div></div></section><section class="slide"><div class="content"><div class="eyebrow">10 · Fluxo integrado</div><h1>Produto → Pedido → Desconto</h1><div class="code-grid"><div class="codebox"><div class="codehead"><span>Pedido.java</span><button class="copy">Copiar</button></div><pre>public double calcularTotalComDesconto(double percentual) {
+    double total = calcularTotal();
+    CalculadoraDesconto calculadora =
+        new CalculadoraDesconto();
 
-  <!-- Slide 7: quiz -->
-  <div class="slide-wrap">
-    <div class="eyebrow">Fixação rápida</div>
-    <h2>Quiz</h2>
-    <div class="quiz-block">
-      <div class="quiz-q">
-        <p>1. Qual dublê tem uma implementação funcional, só que simplificada (ex.: banco em memória)?</p>
-        <div class="quiz-opts">
-          <div class="quiz-opt" onclick="answer(this, false)">Dummy</div>
-          <div class="quiz-opt" onclick="answer(this, true)">Fake</div>
-          <div class="quiz-opt" onclick="answer(this, false)">Mock</div>
-        </div>
-      </div>
-      <div class="quiz-q">
-        <p>2. Por que não testamos NotificadorPedido usando o ServicoEmail real?</p>
-        <div class="quiz-opts">
-          <div class="quiz-opt" onclick="answer(this, false)">Porque Java não permite testar classes com dependências</div>
-          <div class="quiz-opt" onclick="answer(this, true)">Porque enviaria e-mails reais a cada execução do teste — lento e indesejável</div>
-          <div class="quiz-opt" onclick="answer(this, false)">Porque o JUnit bloqueia chamadas de rede automaticamente</div>
-        </div>
-      </div>
-    </div>
-  </div>
+    return calculadora.aplicar(total, percentual);
+}</pre></div><aside class="steps"><div class="step"><b>Entrada</b><p>Produtos somam R$ 300.</p></div><div class="step"><b>Regra</b><p>Desconto de 10%.</p></div><div class="step"><b>Saída</b><p>R$ 270.</p></div></aside></div></div></section><section class="slide"><div class="content"><div class="eyebrow">11 · Evidência</div><h1>Teste do fluxo completo desta integração</h1><div class="codebox"><div class="codehead"><span>PedidoIntegracaoTest.java</span><button class="copy">Copiar</button></div><pre>@Test
+void deveCalcularPedidoComDesconto() {
+    Produto teclado = new Produto("Teclado", 200);
+    Produto mouse = new Produto("Mouse", 100);
+    Pedido pedido = new Pedido();
 
-  <!-- Slide 8: fechamento -->
-  <div class="slide-wrap">
-    <div class="eyebrow">Próxima aula</div>
-    <h2>Automatizando os atores</h2>
-    <p class="lead">Na Aula 08, vamos conhecer o <span class="hl">Mockito</span> — o framework que cria stubs e mocks automaticamente, eliminando a necessidade de escrever classes dublês manualmente como fizemos hoje.</p>
-    <ul class="reflect-list">
-      <li>Revise seu CheckoutTest: quantas linhas você escreveu só para criar os stubs manuais?</li>
-      <li>Pense: que outras dependências externas (além de e-mail e pagamento) merecem um dublê em teste?</li>
-    </ul>
-  </div>
+    pedido.adicionarProduto(teclado);
+    pedido.adicionarProduto(mouse);
 
-</div>
+    double resultado = pedido.calcularTotalComDesconto(10);
 
-<div class="footer-nav">
-  <div class="dots" id="dots"></div>
-  <div class="nav-btns">
-    <button class="nav" onclick="goTo(current-1)">← Anterior</button>
-    <button class="nav" onclick="goTo(current+1)">Próximo →</button>
-    <a class="demo-link" href="a07_demo_ao_vivo.html">Ir para Demo ao Vivo →</a>
-  </div>
-</div>
+    assertEquals(270, resultado, 0.001);
+}</pre></div></div></section><section class="slide"><div class="content"><div class="eyebrow">12 · Investigação</div><h1>Quando a integração fica vermelha</h1><div class="code-grid"><div class="codebox"><div class="codehead"><span>Erro proposital</span></div><pre>// correto
+total += produto.getPreco();
 
+// defeito introduzido
+total -= produto.getPreco();</pre></div><aside class="steps"><div class="step"><b>Observe</b><p>Qual teste falha?</p></div><div class="step"><b>Compare</b><p>Esperado × obtido.</p></div><div class="step"><b>Localize</b><p>Que teste unitário menor ajuda a encontrar a causa?</p></div></aside></div></div></section><section class="slide"><div class="content"><div class="eyebrow">13 · Estratégia</div><h1>A pirâmide de testes</h1><div class="grid"><article class="card"><b>Muitos unitários</b><p>Rápidos e localizados.</p></article><article class="card"><b>Integrações importantes</b><p>Verificam fronteiras e colaboração.</p></article><article class="card"><b>Poucos E2E</b><p>Validam fluxos completos do ponto de vista externo.</p></article></div><div class="note">Os tipos se complementam; integração não substitui teste unitário.</div></div></section><section class="slide"><div class="content"><div class="eyebrow">14 · Próximo problema</div><h1>E quando a dependência é externa?</h1><div class="codebox"><div class="codehead"><span>Exemplo</span></div><pre>Pedido
+   ↓
+ServicoPagamento
+   ↓
+API externa</pre></div><div class="note warning"><b>Pense:</b> precisamos realizar um pagamento verdadeiro toda vez que executamos o teste?</div><a class="cta" href="a07_demo_ao_vivo.html">Ir para demonstração ao vivo →</a></div></section></main>
+<footer class="footer"><span class="counter" id="counter"></span><div class="dots" id="dots"></div><div class="navs"><button class="nav" id="prev">←</button><button class="nav" id="next">→</button><a class="demo" href="a07_demo_ao_vivo.html">Demonstração →</a></div></footer>
 <script>
-  const slides = document.querySelectorAll('.slide-wrap');
-  let current = 0;
-
-  function buildDots(){
-    const dotsEl = document.getElementById('dots');
-    dotsEl.innerHTML = '';
-    slides.forEach((s, i) => {
-      const d = document.createElement('div');
-      d.className = 'dot' + (i === current ? ' active' : '');
-      d.onclick = () => goTo(i);
-      dotsEl.appendChild(d);
-    });
-  }
-
-  function goTo(i){
-    if(i < 0 || i >= slides.length) return;
-    slides[current].classList.remove('active');
-    current = i;
-    slides[current].classList.add('active');
-    buildDots();
-  }
-
-  const tagData = {
-    dummy: '<b>Dummy</b> — objeto de "preenchimento", passado só para satisfazer a assinatura de um método, mas nunca realmente usado.',
-    stub: '<b>Stub</b> — retorna respostas fixas e pré-definidas, sem lógica real. Ótimo para controlar cenários de teste.',
-    fake: '<b>Fake</b> — tem implementação funcional de verdade, mas simplificada (ex.: banco de dados em memória).',
-    spy: '<b>Spy</b> — objeto real (ou parcial) que "grava" as chamadas feitas a ele, permitindo verificar depois quais métodos foram chamados.',
-    mock: '<b>Mock</b> — objeto "programado" com expectativas: define comportamento esperado e verifica se as interações aconteceram como previsto.'
-  };
-
-  function showTag(key){
-    const el = document.getElementById('tag-desc');
-    el.innerHTML = tagData[key];
-    el.classList.add('show');
-  }
-
-  function answer(el, isCorrect){
-    const opts = el.parentElement.querySelectorAll('.quiz-opt');
-    opts.forEach(o => o.onclick = null);
-    if(isCorrect){
-      el.classList.add('correct');
-    } else {
-      el.classList.add('wrong');
-      opts.forEach(o => { if(o.dataset.correct) o.classList.add('correct'); });
-    }
-  }
-
-  buildDots();
-
-  document.addEventListener('keydown', (e) => {
-    if(e.key === 'ArrowRight') goTo(current+1);
-    if(e.key === 'ArrowLeft') goTo(current-1);
-  });
-</script>
-
-</body>
-</html>
+const slides=[...document.querySelectorAll('.slide')],dots=document.getElementById('dots');let current=0;
+slides.forEach((_,i)=>{let b=document.createElement('button');b.className='dot';b.onclick=()=>show(i);dots.appendChild(b)});
+function show(i){current=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,j)=>s.classList.toggle('active',j===current));[...dots.children].forEach((d,j)=>d.classList.toggle('active',j===current));document.getElementById('counter').textContent=`${current+1} / ${slides.length}`;document.getElementById('progress').style.width=`${(current+1)/slides.length*100}%`;document.getElementById('prev').disabled=current===0;document.getElementById('next').disabled=current===slides.length-1}
+document.getElementById('prev').onclick=()=>show(current-1);document.getElementById('next').onclick=()=>show(current+1);document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')show(current+1);if(e.key==='ArrowLeft')show(current-1)});document.querySelectorAll('.copy').forEach(b=>b.onclick=()=>navigator.clipboard.writeText(b.closest('.codebox').querySelector('pre').innerText));show(0);
+</script></body></html>
