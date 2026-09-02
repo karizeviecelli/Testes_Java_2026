@@ -15,7 +15,7 @@ public class ReservaHotelTest {
             () -> assertEquals(3, reserva.getQuantidadeDiarias()),
             () -> assertEquals(200.0, reserva.getValorDiaria()),
             () -> assertFalse(reserva.isConfirmada()),
-            () -> assertEquals("", reserva.getCodigoConfirmacao())
+            () -> assertEquals(null, reserva.getCodigoConfirmacao())
         );
     }
 
